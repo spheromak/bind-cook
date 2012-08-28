@@ -1,0 +1,16 @@
+zone "<%= @bag["zone_name"] %>." IN {
+  type <%= @type %>;
+<% case  @type  -%>
+<% when "master", "slave" -%>
+  allow-query { <%= @allow_query %> };
+  file "<%= @type %>/db/<%= @name %>";
+  <% if @type == "slave" -%>
+  masters {<%= @bag["master_address"] %>; };
+  <% end -%>
+  <% unless @allow_update.empty? -%>
+  allow-update { <%= @allow_update %> };
+  <% end -%> 
+<% when "forward" -%> 
+  forwarders { <%= @bag["forwarders"] %> }; 
+<% end -%>
+};

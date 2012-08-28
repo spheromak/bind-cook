@@ -1,0 +1,14 @@
+# built by chef bind cookbook
+# local changes will be nuked
+
+key "rndc-key" {
+  algorithm hmac-md5;
+  secret "0m52aN9EromGq+ONsu6tJw==";
+};
+
+
+options {
+  default-key "rndc-key";
+  default-server 127.0.0.1;
+  default-port 953;
+};

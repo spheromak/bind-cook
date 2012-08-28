@@ -1,0 +1,17 @@
+// built by chef bind cookbook
+// local changes will be nuked
+key "rndc-key" {
+  algorithm hmac-md5;
+  secret "0m52aN9EromGq+ONsu6tJw==";
+};
+
+key "dhcp-key" {
+  algorithm hmac-md5;
+  secret "L+Jl4+4onU4Wstfi4pdmnQ==";
+};
+
+controls {
+  inet * port 953 allow {any;} keys { "rndc-key"; "dhcp-key"; };
+  inet * port 54  allow {any;} keys { "rndc-key"; "dhcp-key"; };
+};
+
