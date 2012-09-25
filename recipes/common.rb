@@ -36,13 +36,15 @@ end
   %w/db rr/.each do |record|
     directory "/var/named/#{type}" do
       owner bind_user
-      group bind_group
+      group bind_group 
+      recursive true
       mode  0755
     end
     
     directory "/var/named/#{type}/#{record}" do
       owner bind_user
       group bind_group
+      recursive true
       mode  0755
     end unless type == "zones"
   end
