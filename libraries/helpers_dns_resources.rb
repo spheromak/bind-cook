@@ -38,7 +38,12 @@ module Helpers
 
       # common abstract to build resources
       def build_named_conf(args)
-        template "/etc/named.conf" do
+        conf_file = "/etc/named.conf"
+        if node[:platform_family] == "debian"
+          conf_file = "/etc/bind/named.conf"
+        end
+
+        template conf_file do
           source "named.conf.erb"
           owner "root"
           group bind_group
