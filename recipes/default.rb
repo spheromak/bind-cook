@@ -22,9 +22,10 @@
 
 # bring in helpers for "is_yum_platform" method
 include_recipe "helpers"
-
 case node[:platform]
 when "ubuntu","debian" 
+  # disable apparmor on ubu
+  include_recipe "apparmor"
   bind_group = "bind"
 when "centos","redhat","xenserver","amazon" 
   bind_group = "named"

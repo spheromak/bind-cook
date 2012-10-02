@@ -10,3 +10,4 @@ end
 
 depends "helpers"
 depends "logrotate"
+depends "apparmor"
