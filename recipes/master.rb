@@ -88,7 +88,15 @@ dc_bag["zones"].each do |zone|
     # nsupdate bug: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=622084
     #command "nsupdate -v /var/named/#{type}/rr/#{zone}  2>&1 | grep 'update failed:' "
     # returns 1
-    command "nsupdate -v /var/named/#{type}/rr/#{zone}"
+    opts = ""
+    case node[:platform_family]
+    when "redhat"
+      opts = "-v"
+    when "debian"
+      opts = "-lv"
+    end
+
+    command "nsupdate #{opts} /var/named/#{type}/rr/#{zone}"
   end
  
   # collect txt record info from searchs on this domain 
