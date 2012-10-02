@@ -54,6 +54,7 @@ module Helpers
       end
 
       def build_keys_conf(keys="")
+
         template "/etc/named/keys.conf" do
           owner "root"
           group bind_group
@@ -69,6 +70,11 @@ module Helpers
           variables(:keys => keys )
           notifies :reload, "service[bind9]"
         end
+
+        link "/etc/named/rndc.conf" do 
+          to "/etc/rndc.conf"
+        end
+
       end
     end
   end
