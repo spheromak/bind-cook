@@ -90,7 +90,7 @@ dc_bag["zones"].each do |zone|
     # returns 1
     opts = ""
     case node[:platform_family]
-    when "redhat"
+    when "rhel"
       opts = "-v"
     when "debian"
       opts = "-lv"
