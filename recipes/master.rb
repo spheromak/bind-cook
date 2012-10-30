@@ -11,11 +11,6 @@ include_recipe 'bind::common'
 type = "master"
 
 #
-# find zones we should own by looking @ the datacenters bag
-#
-dc_bag = data_bag_item("datacenters", data_bag_fqdn(node[:domain]) )
-
-#
 # Find dhcp servers. 
 # Set them up to allow updates
 #
@@ -34,7 +29,7 @@ dhcp_allow = dhcp_servers.join(";") unless dhcp_servers.empty?
 build_named_conf(  
     :query_allow => "any;",
     :recursion => "yes",
-    :includes => dc_bag["zones"] 
+    :includes => node[:dns][:zones] 
   )
 
 #
@@ -44,7 +39,7 @@ build_named_conf(
 keys = {}
 resource = {}
 delegates = {}
-dc_bag["zones"].each do |zone|  
+node[:dns][:zones].each do |zone|  
   Chef::Log.info "Setting up DNS Zone: #{zone}"
   bag = data_bag_item("dns_zones", data_bag_fqdn(zone) )
 
