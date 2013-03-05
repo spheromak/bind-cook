@@ -19,25 +19,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+#
 
-# bring in helpers for "is_yum_platform" method
-include_recipe "helpers"
-case node[:platform]
-when "ubuntu","debian" 
-  # disable apparmor on ubu
+rhat = false
+case node[:platform_family]
+when "debian" 
   include_recipe "apparmor"
   bind_group = "bind"
-when "centos","redhat","xenserver","amazon" 
+when "rhat"
+  rhat = true
   bind_group = "named"
 end
 
 package "bind9" do
-  package_name "bind" if is_yum_platform
+  package_name "bind" if rhat
   action :install
 end
 
 package "bind9utils" do
-  package_name "bind-utils" if is_yum_platform
+  package_name "bind-utils" if rhat
   action :install
 end
 
@@ -59,7 +59,7 @@ template "/etc/bind/named.conf.options" do
 end
 
 service "bind9" do
-  service_name "named" if is_yum_platform
+  service_name "named" if rhat
   supports :restart => true, :status => true, :reload => true
   running true
   enabled true
