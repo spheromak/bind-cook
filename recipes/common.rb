@@ -42,6 +42,7 @@ link "/etc/named" do
   only_if do node[:platform_family] == "debian" end
 end
 
+# build up the various dirs where we house things
 %w/zones master slave/.each do |type|
   %w/db rr/.each do |record|
     directory "/var/named/#{type}" do
