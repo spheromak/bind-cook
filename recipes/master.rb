@@ -17,9 +17,13 @@ type = "master"
 dhcp_servers=[]
 dhcp_allow = nil
 
-scoped_search("domain", :node, " recipes:dhcp\\:\\:server" ).each do |n|
-  dhcp_servers << n.ipaddress
-end  
+
+dhcp_servers = Discovery.all("dhcp_server", 
+  :node => node,
+  :empty_ok => true,
+  :environment_aware => true
+)
+
 Chef::Log.info "Found DHCP servers: #{dhcp_servers.inspect}"
 dhcp_allow = dhcp_servers.join(";") unless dhcp_servers.empty?
 
@@ -41,7 +45,7 @@ resource = {}
 delegates = {}
 node[:dns][:zones].each do |zone|  
   Chef::Log.info "Setting up DNS Zone: #{zone}"
-  bag = data_bag_item("dns_zones", data_bag_fqdn(zone) )
+  bag = data_bag_item("dns_zones",  Helpers::DataBags.escape_bagname(zone) )
 
   # make sure we have all the data we need
   validate_zone_data(type, bag)

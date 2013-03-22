@@ -19,8 +19,7 @@ build_named_conf(
 keys = {}
 node[:dns][:root_zones].each do |zone|
 
-  # call to data_bag_fqdn simply replaces '.' with '-' 
-  bag = data_bag_item("dns_zones", data_bag_fqdn(zone) )
+  bag = data_bag_item("dns_zones", Helpers::DataBags.escape_bagname(zone) )
 
   validate_zone_data("master", bag)
 

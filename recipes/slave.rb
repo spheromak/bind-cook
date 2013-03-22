@@ -21,7 +21,7 @@ build_named_conf(
 
 keys = {}
 node[:dns][:zones].each do |zone| 
-  bag = data_bag_item("dns_zones", data_bag_fqdn(zone) )
+  bag = data_bag_item("dns_zones", Helpers::DataBags.escape_bagname(zone) )
   
   # clobber merge keys 
   if bag.has_key?("keys")
