@@ -1,3 +1,4 @@
+name             "bind"
 maintainer       "Jesse Nelson"
 maintainer_email "spheromak@gmail.com"
 description      "Bind Cookbooks driven via DataBags" 
@@ -10,7 +11,7 @@ end
 
 depends "ruby-helper"
 depends "helpers-databags"
-depends "helpers-cache"
+depends "discovery"
 
 depends "logrotate"
 depends "apparmor"
