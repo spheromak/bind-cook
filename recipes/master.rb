@@ -17,16 +17,13 @@ type = "master"
 dhcp_servers=[]
 dhcp_allow = nil
 
-
-dhcp_servers = Discovery.all("dhcp_server", 
+# Find dhcp servers and their ip adress
+dhcp_allow = Discovery.all("dhcp_server", 
   :node => node,
   :empty_ok => true,
   :environment_aware => true
-)
+).map { |n| n.ipaddress }
 
-Chef::Log.info "Found DHCP servers: #{dhcp_servers.inspect}"
-
-dhcp_allow = dhcp_servers.map { |n| n.fqdn } unless dhcp_servers.empty?
 
 #
 # setup named.conf
