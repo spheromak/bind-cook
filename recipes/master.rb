@@ -25,7 +25,8 @@ dhcp_servers = Discovery.all("dhcp_server",
 )
 
 Chef::Log.info "Found DHCP servers: #{dhcp_servers.inspect}"
-dhcp_allow = dhcp_servers.join(";") unless dhcp_servers.empty?
+
+dhcp_allow = dhcp_servers.map { |n| n.fqdn } unless dhcp_servers.empty?
 
 #
 # setup named.conf
