@@ -27,5 +27,5 @@ platforms:
   - recipe[yum::epel]
 suites:
 - name: default
-  run_list: []
+  run_list: [ "recipe[bind::master]" ]
   attributes: {}
