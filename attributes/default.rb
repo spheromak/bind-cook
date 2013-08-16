@@ -18,6 +18,6 @@ if platform_family == "rhel"
 
   if platform_version.to_i > 5
     default[:bind][:package] = "bind"
-    default[:bind][:package_utils] = "bindutils"
+    default[:bind][:package_utils] = "bind-utils"
   end
 end
