@@ -68,7 +68,7 @@ node[:dns][:zones].each do |zone|
     group bind_group
     mode  0640
     variables( :name => zone, :data => bag )
-    notifies :restart, "service[bind9]"
+    notifies :restart, "service[#{node[:bind][:service_name]}]"
   end
 
 

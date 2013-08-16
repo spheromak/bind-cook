@@ -32,7 +32,7 @@ module Helpers
             :bag => bag,
             :type => type
           )
-          notifies :reload, "service[bind9]"
+          notifies :reload, "service[#{node[:bind][:service_name]}]"
         end
       end
 
@@ -49,7 +49,7 @@ module Helpers
           group bind_group
           mode 0640
           variables( args )
-          notifies :reload, "service[bind9]"
+          notifies :reload, "service[#{node[:bind][:service_name]}]"
         end
       end
 
@@ -60,7 +60,7 @@ module Helpers
           group bind_group
           mode 0640
           variables(:keys => keys )
-          notifies :reload, "service[bind9]"
+          notifies :reload, "service[#{node[:bind][:service_name]}]"
         end
 
         template "/etc/rndc.conf" do
@@ -68,7 +68,7 @@ module Helpers
           group bind_group
           mode 0640
           variables(:keys => keys )
-          notifies :reload, "service[bind9]"
+          notifies :reload, "service[#{node[:bind][:service_name]}]"
         end
 
         link "/etc/named/rndc.conf" do 

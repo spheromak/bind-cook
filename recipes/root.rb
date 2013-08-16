@@ -41,8 +41,8 @@ node[:dns][:root_zones].each do |zone|
     group bind_group
     mode  0640
     variables( :name => zone, :data => bag )
-    notifies :start, "service[bind9]" 
-    notifies :reload, "service[bind9]" 
+    notifies :start, "service[#{node[:bind][:service_name]}]" 
+    notifies :reload, "service[#{node[:bind][:service_name]}]" 
   end
 
   # parse the resource_records in this zone and get the formated entries

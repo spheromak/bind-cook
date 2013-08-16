@@ -2,9 +2,9 @@
 # Author:: Jesse Nelson <spheromak@gmail.com>
 #
 # based on the bind cookbook included in the dell crowbar project:
-# http://github.com/dellcloudedge/crowbar 
+# http://github.com/dellcloudedge/crowbar
 #
-# Copyright 2012, Jesse Nelson 
+# Copyright 2012, Jesse Nelson
 # Copyright 2011, Dell
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,23 +21,16 @@
 #
 #
 
-rhat = false
 case node[:platform_family]
-when "debian" 
+when "debian"
   include_recipe "apparmor"
-  bind_group = "bind"
-when "rhat"
-  rhat = true
-  bind_group = "named"
 end
 
-package "bind9" do
-  package_name "bind" if rhat
+package node[:bind][:package] do
   action :install
 end
 
-package "bind9utils" do
-  package_name "bind-utils" if rhat
+package node[:bind][:package_utils] do
   action :install
 end
 
@@ -45,21 +38,20 @@ directory "/etc/bind"
 
 file "/etc/named.conf" do
   owner "root"
-  group bind_group
+  group node[:bind][:group]
   mode 0640
 end
-  
+
 template "/etc/bind/named.conf.options" do
   source "named.conf.options.erb"
   variables(:forwarders => node[:dns][:forwarders])
   mode 0644
   owner "root"
-  group bind_group
-  notifies :restart, "service[bind9]"
+  group node[:bind][:group]
+  notifies :restart, "service[#{node[:bind][:service_name]}]"
 end
 
-service "bind9" do
-  service_name "named" if rhat
+service node[:bind][:service_name] do
   supports :restart => true, :status => true, :reload => true
   running true
   enabled true
