@@ -1,0 +1,15 @@
+{
+  "id": "test",
+  "zone_name": "test",
+  "ttl": "2d",
+  "authority": "localhost",
+  "email": "root",
+  "refresh": "1h", "retry": "15m", "expire": "7d", "minimum": "1h",
+  "allow_update": "127.0.0.1",
+  "allow_query": "any;",
+  "name_servers": { "localhost": "127.0.0.1" },
+  "master_address": "127.0.0.1",
+  "resource_records": {
+    "test1": { "A": "10.0.2.123" }
+  }
+}

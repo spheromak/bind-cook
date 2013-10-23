@@ -45,7 +45,7 @@ end
 # if we have a /etc/bind (ubu deb etc) then link it to /etc/named.conf
 link "/etc/named" do
   to "/etc/bind"
-  only_if do node[:platform_family] == "debian" end
+  only_if do platform_family?("debian") end
 end
 
 # build up the various dirs where we house things
@@ -92,4 +92,3 @@ logrotate_app "named_auth" do
   frequency "daily"
   rotate 3
 end
-
