@@ -21,8 +21,7 @@
 #
 #
 
-case node[:platform_family]
-when "debian"
+if platform_family?("debian")
   include_recipe "apparmor"
 end
 
@@ -44,7 +43,9 @@ end
 
 template "/etc/bind/named.conf.options" do
   source "named.conf.options.erb"
-  variables(:forwarders => node[:dns][:forwarders])
+  variables(
+    :forwarders => node[:dns][:forwarders]
+  )
   mode 0644
   owner "root"
   group node[:bind][:group]
@@ -57,5 +58,3 @@ service node[:bind][:service_name] do
   enabled true
   action :enable
 end
-
-

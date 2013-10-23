@@ -2,7 +2,7 @@
 # Author:: Jesse Nelson <spheromak@gmail.com>
 # Cookbook:: Bind
 # Recipe:: master
-# 
+#
 #  Recipe that builds up a  master for one of the datacnters
 #
 include_recipe 'bind::common'
@@ -11,14 +11,14 @@ include_recipe 'bind::common'
 type = "master"
 
 #
-# Find dhcp servers. 
+# Find dhcp servers.
 # Set them up to allow updates
 #
 dhcp_servers=[]
 dhcp_allow = nil
 
 # Find dhcp servers and their ip adress
-dhcp_allow = Discovery.all("dhcp_server", 
+dhcp_allow = Discovery.all("dhcp_server",
   :node => node,
   :empty_ok => true,
   :environment_aware => true
@@ -28,11 +28,11 @@ dhcp_allow = Discovery.all("dhcp_server",
 #
 # setup named.conf
 #
-build_named_conf(  
-    :query_allow => "any;",
-    :recursion => "yes",
-    :includes => node[:dns][:zones] 
-  )
+build_named_conf(
+  :query_allow => "any;",
+  :recursion => "yes",
+  :includes => node[:dns][:zones]
+)
 
 #
 # gonna collect all rndc_keys here
@@ -41,22 +41,22 @@ build_named_conf(
 keys = {}
 resource = {}
 delegates = {}
-node[:dns][:zones].each do |zone|  
+node[:dns][:zones].each do |zone|
   Chef::Log.info "Setting up DNS Zone: #{zone}"
-  bag = data_bag_item("dns_zones",  Helpers::DataBags.escape_bagname(zone) )
+  bag = data_bag_item("dns_zones", Helpers::DataBags.escape_bagname(zone))
 
   # make sure we have all the data we need
   validate_zone_data(type, bag)
- 
-  # clobber merge keys 
-  if bag.has_key?("keys") 
-    keys = Chef::Mixin::DeepMerge.merge(keys, bag["keys"] )
+
+  # clobber merge keys
+  if bag.has_key?("keys")
+    keys = Chef::Mixin::DeepMerge.merge(keys, bag["keys"])
   end
 
-  # crate the zone record 
-  build_zone( zone, type, bag, dhcp_allow)
+  # crate the zone record
+  build_zone(zone, type, bag, dhcp_allow)
 
-  # 
+  #
   # Create the Base Zone File
   # this should only be created ever once
   # after that its all dynamic updates
@@ -67,16 +67,16 @@ node[:dns][:zones].each do |zone|
     owner bind_user
     group bind_group
     mode  0640
-    variables( :name => zone, :data => bag )
+    variables(:name => zone, :data => bag)
     notifies :restart, "service[#{node[:bind][:service_name]}]"
   end
 
 
-  # 
-  # 
+  #
+  #
   # setup the nsupdate exec for this zone
   # resources below will exec it
-  # 
+  #
   execute "nsupdate_#{zone}" do
     action :nothing
     #
@@ -95,16 +95,16 @@ node[:dns][:zones].each do |zone|
 
     command "nsupdate #{opts} /var/named/#{type}/rr/#{zone}"
   end
- 
-  # collect txt record info from searchs on this domain 
+
+  # collect txt record info from searchs on this domain
   # parse the resource_records in this zone and get the formated entries
   #  for now disable txt records so dhcp can update
-  #resources = build_resources( collect_txt(bag["resource_records"]), bag["zone_name"] )
-  resources = build_resources( bag["resource_records"], bag["zone_name"] )
+  #resources = build_resources(collect_txt(bag["resource_records"]), bag["zone_name"])
+  resources = build_resources(bag["resource_records"], bag["zone_name"])
 
   # build delegate list
   delegates =  load_delegates(bag)
-  
+
 
   # generate nsupdate file
   template "/var/named/#{type}/rr/#{zone}" do
@@ -116,19 +116,12 @@ node[:dns][:zones].each do |zone|
       :zone => bag["zone_name"],
       :records =>  resources,
       # set the ttl for delegates
-      :ttl => "172800", 
+      :ttl => "172800",
       :delegates => delegates
     )
     notifies :run, "execute[nsupdate_#{zone}]", :delayed
-  end 
+  end
 end
 
-# build out rndc 
-build_keys_conf( keys )
-
-# make sure server is running
-
-
-
-
-
+# build out rndc
+build_keys_conf(keys)

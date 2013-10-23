@@ -14,5 +14,15 @@ platforms:
 
 suites:
 - name: default
-  run_list: [ "recipe[bind::master]" ]
-  attributes: {}
+  run_list:
+    - recipe[ktc-testing]
+    - recipe[bind::master]
+  attributes:
+    dns:
+      master: 10.0.2.15
+      zones:
+        - test
+
+clusters:
+  default:
+    - default
