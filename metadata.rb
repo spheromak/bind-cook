@@ -1,7 +1,7 @@
 name             "bind"
 maintainer       "Jesse Nelson"
 maintainer_email "spheromak@gmail.com"
-description      "Bind Cookbooks driven via DataBags" 
+description      "Bind Cookbooks driven via DataBags"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "2.0.1"
 
@@ -9,9 +9,8 @@ version          "2.0.1"
   supports os
 end
 
-depends "ruby-helper"
-depends "helpers-databags"
-depends "discovery"
-
-depends "logrotate"
 depends "apparmor"
+depends "discovery"
+depends "helpers-databags"
+depends "logrotate"
+depends "ruby-helper"

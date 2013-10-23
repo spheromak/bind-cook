@@ -14,5 +14,11 @@ platforms:
 
 suites:
 - name: default
-  run_list: [ "recipe[bind::master]" ]
+  run_list:
+    - recipe[ktc-testing]
+    - recipe[bind::master]
   attributes: {}
+
+clusters:
+  default:
+    - default
