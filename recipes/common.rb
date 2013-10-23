@@ -25,12 +25,18 @@ include_recipe 'bind::default'
 
 # dangerous, but w/e
 # nuke the slaves directory if its there (by default on rhat)
-directory "/var/named/slaves" do 
+directory "/var/named/slaves" do
   recursive true
   action :delete
 end
 
-directory "/var/named/data" do 
+directory "/var/named" do
+  owner bind_user
+  group bind_group
+  mode 0755
+end
+
+directory "/var/named/data" do
   owner bind_user
   group bind_group
   mode 0755
@@ -38,7 +44,7 @@ end
 
 # if we have a /etc/bind (ubu deb etc) then link it to /etc/named.conf
 link "/etc/named" do
-  to "/etc/bind" 
+  to "/etc/bind"
   only_if do node[:platform_family] == "debian" end
 end
 
@@ -51,7 +57,7 @@ end
       recursive true
       mode  0755
     end
-    
+
     directory "/var/named/#{type}/#{record}" do
       owner bind_user
       group bind_group
@@ -63,7 +69,7 @@ end
 
 # setup logs
 [ "/var/log/named-auth.info", "/var/log/update-debug.log" ].each do |log|
-  file log do 
+  file log do
      owner bind_user
      group bind_group
      mode  0660
@@ -80,8 +86,8 @@ end
 end
 
 logrotate_app "named_auth" do
-  path [ 
-    "/var/log/named-auth.info", 
+  path [
+    "/var/log/named-auth.info",
     "/var/log/update-debug.log" ]
   frequency "daily"
   rotate 3
