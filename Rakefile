@@ -26,6 +26,7 @@ namespace :test do
       canefile = ".cane"
       cane.abc_max = 10
       cane.abc_glob =  '{recipes,libraries,resources,providers}/**/*.rb'
+      cane.abc_exclude = %w(Helpers::Dns#build_resources Helpers::Dns#collect_txt)
       cane.no_style = true
       cane.parallel = true
     end

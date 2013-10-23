@@ -10,8 +10,6 @@ class Chef::Recipe
   include Helpers::Bags
 end
 
-
 #data = { :run_list =>  node.run_list }
 
 #save_bag_item(data_bag_fqdn("hostdata_#{node.domain}"), data_bag_fqdn, data)
-

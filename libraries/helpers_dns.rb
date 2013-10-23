@@ -5,76 +5,78 @@ module Helpers
     # returns an array of entries suitable for bind zone
     # TODO: Need to refactor this in a big way
     # TODO: TTL should be per-entry IMO
+    # TODO: fix cane ABC complexity:
+    # libraries/helpers_dns.rb  Helpers::Dns#build_resources  28
     def build_resources(data, zone, ttl="3600")
       ptr = []
-      resources = [] 
+      resources = []
       # unroll resource_records and pass in lists for the template
       unless data.nil? or data.empty?
         data.each_key do |rr|
 
           host = rr
           # find out if this host is qualified entry or not
-          # ends in .   \.$  
-          # or is a litteral @ 
+          # ends in .   \.$
+          # or is a litteral @
           unless host =~ /\.$|@/
             host = "#{host}.#{zone}."
-          end 
+          end
 
           delete_first = nil
-          # see if we want to remove records before adding          
-          if data[rr].has_key?("delete_first") and 
-          data[rr]["delete_first"].nil? == false and 
-          data[rr]["delete_first"].to_s.downcase == "true"
+          # see if we want to remove records before adding
+          if data[rr].has_key?("delete_first") and
+            data[rr]["delete_first"].nil? == false and
+            data[rr]["delete_first"].to_s.downcase == "true"
 
-            delete_first = true  
-          end 
-         
-          if data[rr].has_key?("delete") 
-            resources << "delete #{host}" 
-          end 
+            delete_first = true
+          end
+
+          if data[rr].has_key?("delete")
+            resources << "delete #{host}"
+          end
 
           #
           # unroll each type and gen the entries
           #
-          data[rr].each do |type,value|
-            
-            # crete entries suitable for nsupdate 
-            case type
-            when /ptr/i 
-              ptr << "delete  #{host}  #{type.upcase} "  if delete_first 
-              # well ignore everything else if we run into ptr records
-              ptr  <<  "add #{host} #{ttl} #{type.upcase}  #{value}"
+          data[rr].each do |type, val|
 
-            when "A","a"
-              resources << "delete  #{host}  #{type.upcase} "  if delete_first 
-              resources << "add #{host} #{ttl} #{type.upcase}  #{value}"
+            # crete entries suitable for nsupdate
+            case type
+            when /ptr/i
+              ptr << "delete  #{host}  #{type.upcase} "  if delete_first
+              # well ignore everything else if we run into ptr records
+              ptr  <<  "add #{host} #{ttl} #{type.upcase}  #{val}"
+
+            when "A", "a"
+              resources << "delete  #{host}  #{type.upcase} "  if delete_first
+              resources << "add #{host} #{ttl} #{type.upcase}  #{val}"
 
             when /TXT/i
-              resources << "delete  #{host} #{type.upcase} "  if delete_first 
-              if value.class == Array 
+              resources << "delete  #{host} #{type.upcase} "  if delete_first
+              if val.class == Array
                 strings = ""
-                value.each {|field| strings << " \"#{field}\" "  }
-                resources << "add #{host} #{ttl} TXT  #{strings}" 
+                val.each { |field| strings << " \"#{field}\" " }
+                resources << "add #{host} #{ttl} TXT  #{strings}"
               else
-                resources << "add #{host} #{ttl} #{type.upcase}  \" #{value} \" "
+                resources << "add #{host} #{ttl} #{type.upcase}  \" #{val} \" "
               end
 
             when /CNAME/i
-              if value.class == Array
-                value.each do |cname| 
+              if val.class == Array
+                val.each do |cname|
                   cname = "#{cname}.#{zone}." unless cname =~ /\.$/
                   resources << "delete #{cname}   CNAME" if delete_first
                   resources << "add #{cname} #{ttl} CNAME #{host}"
-              
+
                 end
               else
-                value = "#{value}.#{zone}." unless value =~ /\.$/
-                resources << "delete #{value} CNAME #{host}" if delete_first
-                resources << "add #{value} #{ttl} CNAME #{host}"
+                val = "#{val}.#{zone}." unless val =~ /\.$/
+                resources << "delete #{val} CNAME #{host}" if delete_first
+                resources << "add #{val} #{ttl} CNAME #{host}"
               end
             end
-            # end type case 
-            
+            # end type case
+
           end
         end
       end
@@ -83,19 +85,22 @@ module Helpers
       return ptr
     end
 
-  
-    #   
+
+    #
     # search all nodes in this domain
     #  and collect some info into a TXT record
     # expects a resource_record hash from domain data bag
+    # TODO: reduce cane complexity:
+    # Helpers::Dns#collect_txt      18
     def collect_txt(records)
       # now were gonna do some inventory collection
-      search( :node, "domain:#{node.domain}").each do |n|
+      search(:node, "domain:#{node.domain}").each do |n|
         # pull out facts to insert into TXT
         # we could do cnames for now just merge txt
-        
-        # these are the facts we are inserting 
-        texts = [ "Run_list: #{n.run_list}", "Environment: #{n.chef_environment}" ]
+
+        # these are the facts we are inserting
+        texts = ["Run_list: #{n.run_list}",
+          "Environment: #{n.chef_environment}"]
 
         # merge this data with existing records.
         if records.has_key?(n.hostname)
@@ -114,14 +119,14 @@ module Helpers
       end
       records
     end
-    
+
     #
     # resolve the right group for bind based on platform
     #
     def bind_group
       # figure whitch group name to use
       case node[:platform]
-      when "ubuntu","debian" 
+      when "ubuntu", "debian"
         bind_group = "bind"
       else
         bind_group = "named"
@@ -129,18 +134,18 @@ module Helpers
     end
     alias :bind_user :bind_group
 
-    # 
-    # Takes a bag looks for delegate key. 
+    #
+    # Takes a bag looks for delegate key.
     # returns array of bags that match those
     #
     def load_delegates(bag)
       delegates = []
-      if bag.has_key?("delegate") 
+      if bag.has_key?("delegate")
         bag["delegate"].each do |zone|
-          delegates << data_bag_item(:dns_zones, data_bag_fqdn(zone) )
+          delegates << data_bag_item(:dns_zones, data_bag_fqdn(zone))
         end
       end
-      delegates  
+      delegates
     end
 
     def node_dns_master?(bag)
@@ -149,22 +154,22 @@ module Helpers
       %/eth0 eth1 bond0 bond1 ib0 ib1/.each do |int|
         if node[:network].has_key?("ipaddress_#{int}")
           if node[:network]["ipaddress_#{int}"] == bag["master_address"]
-            master = true 
+            master = true
           end
-        end 
+        end
       end
       master
     end
 
     #
-    # do some checks on a data structure 
+    # do some checks on a data structure
     # to ensure we have them in this bag
     #
     def validate_zone_data(type, data)
       keys=%w/ ttl refresh retry expire minimum
-        zone_name 
-        authority 
-        email 
+        zone_name
+        authority
+        email
         name_servers
         master_address
         allow_query
@@ -176,16 +181,18 @@ module Helpers
       when /master/i
         keys << "allow_update"
       end
- 
+
       keys.each do |key|
         unless data.has_key?(key)
-          raise Chef::Exceptions::AttributeNotFound,
-            "Couldn't find required config option '#{key}' in zone #{data["zone_name"]}"           
+          error = "Couldn't find required config option '#{key}' "
+          error << "in zone #{data["zone_name"]}"
+          raise Chef::Exceptions::AttributeNotFound error
         end
-        
+
         if data[key].empty?
-          raise Chef::Exceptions::AttributeNotFound,
-            "Config option #{key} is empty, and should have a value in zone #{data["zone_name"]}"  
+          error = "Config option #{key} is empty, "
+          error << "and should have a value in zone #{data["zone_name"]}"
+          raise Chef::Exceptions::AttributeNotFound error
         end
       end
     end
