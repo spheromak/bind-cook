@@ -54,7 +54,5 @@ end
 
 service node[:bind][:service_name] do
   supports :restart => true, :status => true, :reload => true
-  running true
-  enabled true
   action :enable
 end
