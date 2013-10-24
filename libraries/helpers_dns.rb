@@ -105,7 +105,7 @@ module Helpers
         # merge this data with existing records.
         if records.has_key?(n.hostname)
           if records[n.hostname].has_key?("TXT")
-            Chef::Log.debug "#{records[n.hostname]["TXT"]}"
+            Chef::Log.debug records[n.hostname]["TXT"]
             records[n.hostname]["TXT"]  << texts
             # gotta fold our array push into a 1dim array
             records[n.hostname]["TXT"].flatten!
@@ -115,7 +115,7 @@ module Helpers
         else
           records[n.hostname] = { "TXT" => texts }
         end
-        Chef::Log.debug "#{records[n.hostname]["TXT"]}"
+        Chef::Log.debug records[n.hostname]["TXT"]
       end
       records
     end
