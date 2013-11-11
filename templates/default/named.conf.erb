@@ -14,7 +14,7 @@ options {
   dump-file       "/var/named/data/cache_dump.db";
   statistics-file "/var/named/data/named_stats.txt";
   memstatistics-file "/var/named/data/named_mem_stats.txt";
-  allow-query     { <%= @query_allow %> };
+  allow-query     { <%= Dns::Templatea.match_list(@allow_query) %> };
   recursion <%= @recursion %>;
 
   // Disable name checking for dynamic dns allowing names with _ in them
@@ -53,6 +53,6 @@ zone "." IN {
 
 include "/etc/named.rfc1912.zones";
 
-<% @includes.each do |file| %>
+<% @zones.each do |file| %>
 include "/var/named/zones/<%= file %>";
 <% end %>

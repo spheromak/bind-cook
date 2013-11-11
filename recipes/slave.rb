@@ -11,13 +11,6 @@ include_recipe 'bind::common'
 # for now hardcode type
 type = "slave"
 
-# setup named.conf
-build_named_conf(
-  :query_allow => "any;",
-  :recursion => "yes",
-  :includes => node[:dns][:zones]
-)
-
 keys = {}
 node[:dns][:zones].each do |zone|
   bag = data_bag_item("dns_zones", Helpers::DataBags.escape_bagname(zone))

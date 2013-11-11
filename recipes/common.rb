@@ -2,24 +2,6 @@
 # Bind cook common stuff
 #
 
-#bring in our dns mixins
-class Chef::Recipe
-  include Helpers::Dns
-  include Helpers::Dns::Resources
-end
-
-class Chef::Resource::Template
-  include Helpers::Dns
-end
-
-class Chef::Resource::Directory
-  include Helpers::Dns
-end
-
-class Chef::Resource::File
-  include Helpers::Dns
-end
-
 # ensure all the normal bind stuff is there
 include_recipe 'bind::default'
 

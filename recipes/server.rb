@@ -1,31 +1,12 @@
 #
 # Author:: Jesse Nelson <spheromak@gmail.com>
 # Cookbook:: Bind
-# Recipe:: master
+# Recipe:: server
 #
 #  Recipe that builds up a  master for one of the datacnters
 #
 include_recipe 'bind::common'
 
-# for now hardcode type
-type = "master"
-
-#
-# Find dhcp servers.
-# Set them up to allow updates
-#
-dhcp_servers=[]
-dhcp_allow = nil
-
-# Find dhcp servers and their ip adress
-dhcp_allow = Discovery.all("dhcp_server",
-  :node => node,
-  :empty_ok => true,
-  :environment_aware => true
-).map { |n| n.ipaddress }
-
-
-#
 # setup named.conf
 #
 build_named_conf(
@@ -33,6 +14,15 @@ build_named_conf(
   :recursion => "yes",
   :includes => node[:dns][:zones]
 )
+
+if default[:dns][:master] == node[:ipaddress]
+  type = "master"
+  dhcp_allow = Helpers::Dns.find_dhcp_servers(node)
+else
+  type = "slave"
+end
+
+
 
 #
 # gonna collect all rndc_keys here
