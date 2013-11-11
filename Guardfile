@@ -5,9 +5,9 @@ require 'guard/kitchen'
 SafeYAML::OPTIONS[:deserialize_symbols] = true
 
 guard 'rake', :task => 'test:quick' do
-  watch(%r{^spec/.+_spec\.rb$})
+  watch(%r{^test/spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
-  watch('spec/spec_helper.rb')  { "spec" }
+  watch('test/spec/spec_helper.rb')  { "spec" }
   watch(%r{^recipes/(.+)\.rb$}) { |m| "spec/unit/recipes/#{m[1]}_spec.rb" }
   watch(%r{^attributes/(.+)\.rb$})
   watch(%r{^files/(.+)})
