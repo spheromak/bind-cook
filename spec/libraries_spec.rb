@@ -7,7 +7,7 @@ require 'chefspec'
 #  end
 #end
 
-require_relative "../../libraries/helpers_dns"
+require_relative "../libraries/helpers_dns"
 describe 'Helpers::Dns.match_list' do
   before do
     @matched =  "one; two; three;"

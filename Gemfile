@@ -18,4 +18,6 @@ group "develop" do
   gem 'guard-kitchen'
   gem 'knife-cookbook-doc'
   gem 'chefspec', '>= 3.0.0'
+  gem 'strainer',
+    git: "https://github.com/customink/strainer"
 end

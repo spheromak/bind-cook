@@ -14,9 +14,9 @@ guard 'rake', :task => 'test:quick' do
   watch(%r{^resources/(.+)\.rb}) { |m| "spec/unit/resources/#{m[1]}_spec.rb" }
 end
 
-guard 'rake', :task => 'test:spec' do
-  watch(%r{^test/spec/.+_spec\.rb$})
-  watch('test/spec/spec_helper.rb')  { "spec" }
+guard 'rake', :task => 'strainer' do
+  watch(%r{^spec/.+_spec\.rb$})
+  watch('spec/spec_helper.rb')
 end
 
 #guard 'kitchen' do

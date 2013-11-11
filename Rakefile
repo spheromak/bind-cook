@@ -6,9 +6,9 @@ task :default => 'test:quick'
 
 namespace :test do
 
-  RSpec::Core::RakeTask.new(:spec) do |t|
-    t.pattern = Dir.glob('test/spec/**/*_spec.rb')
-    t.rspec_opts = "--color -f d"
+  require 'strainer/rake_task'
+  Strainer::RakeTask.new(:strainer) do |s|
+    s.strainerfile = 'Strainerfile'
   end
 
   begin
@@ -37,17 +37,6 @@ namespace :test do
   end
 
   begin
-    require 'foodcritic'
-
-    task :default => [:foodcritic]
-    FoodCritic::Rake::LintTask.new do |t|
-      t.options = {:fail_tags => %w/correctness services libraries deprecated/ }
-    end
-  rescue LoadError
-    warn "Foodcritic Is missing ZOMG"
-  end
-
-  begin
     require 'tailor/rake_task'
     Tailor::RakeTask.new
   rescue LoadError
@@ -58,8 +47,7 @@ namespace :test do
   desc 'Run all of the quick tests.'
   task :quick do
     Rake::Task['test:quality'].invoke
-    Rake::Task['test:foodcritic'].invoke
-    Rake::Task['test:spec'].invoke
+    Rake::Task['test:strainer'].invoke
     Rake::Task['test:tailor'].invoke
   end
 
