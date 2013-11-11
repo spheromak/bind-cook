@@ -7,13 +7,6 @@
 #
 include_recipe 'bind::common'
 
-# setup named.conf
-#
-build_named_conf(
-  :query_allow => "any;",
-  :recursion => "yes",
-  :includes => node[:dns][:zones]
-)
 
 if default[:dns][:master] == node[:ipaddress]
   type = "master"
@@ -22,7 +15,9 @@ else
   type = "slave"
 end
 
-
+bind_conf "server" do
+  zones node[:dns][:zones]
+end
 
 #
 # gonna collect all rndc_keys here
@@ -54,8 +49,8 @@ node[:dns][:zones].each do |zone|
   template "/var/named/#{type}/db/#{zone}" do
     action :create_if_missing
     source "db.erb"
-    owner bind_user
-    group bind_group
+    owner node[:bind][:user]
+    group node[:bind][:group]
     mode  0640
     variables(:name => zone, :data => bag)
     notifies :restart, "service[#{node[:bind][:service_name]}]"
@@ -99,8 +94,8 @@ node[:dns][:zones].each do |zone|
   # generate nsupdate file
   template "/var/named/#{type}/rr/#{zone}" do
     source "nsupdate.erb"
-    owner bind_user
-    group bind_group
+    owner node[:bind][:user]
+    group node[:bind][:group]
     mode  0640
     variables(
       :zone => bag["zone_name"],

@@ -22,8 +22,8 @@ module Helpers
 
         template "/var/named/zones/#{zone}" do
           source "zone.erb"
-          owner bind_user
-          group bind_group
+          owner node[:bind][:user]
+          group node[:bind][:group]
           mode  0640
           variables(
             :name => zone,

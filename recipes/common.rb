@@ -13,14 +13,14 @@ directory "/var/named/slaves" do
 end
 
 directory "/var/named" do
-  owner bind_user
-  group bind_group
+  owner node[:bind][:user]
+  group node[:bind][:group]
   mode 0755
 end
 
 directory "/var/named/data" do
-  owner bind_user
-  group bind_group
+  owner node[:bind][:user]
+  group node[:bind][:group]
   mode 0755
 end
 
@@ -34,15 +34,15 @@ end
 %w/zones master slave/.each do |type|
   %w/db rr/.each do |record|
     directory "/var/named/#{type}" do
-      owner bind_user
-      group bind_group
+      owner node[:bind][:user]
+      group node[:bind][:group]
       recursive true
       mode  0755
     end
 
     directory "/var/named/#{type}/#{record}" do
-      owner bind_user
-      group bind_group
+      owner node[:bind][:user]
+      group node[:bind][:group]
       recursive true
       mode  0755
       not_if do type.eql?("zones") end
@@ -53,8 +53,8 @@ end
 # setup logs
 ["/var/log/named-auth.info", "/var/log/update-debug.log"].each do |log|
   file log do
-    owner bind_user
-    group bind_group
+    owner node[:bind][:user]
+    group node[:bind][:group]
     mode  0660
   end
 
@@ -62,8 +62,8 @@ end
 
 %w{ /etc/named.rfc1912.zones /var/named/named.ca }.each do |cook_file|
   cookbook_file cook_file do
-    owner bind_user
-    group bind_group
+    owner node[:bind][:user]
+    group node[:bind][:group]
     mode 0664
   end
 end
