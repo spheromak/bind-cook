@@ -3,7 +3,7 @@ default_action :create
 
 #<> should terminate as a proper bind string
 attribute :config_file,
-  kinf_of: String,
+  kind_of: String,
   default: "/etc/named.conf",
   name_attribute: true
 
