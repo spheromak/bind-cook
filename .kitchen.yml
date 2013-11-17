@@ -18,7 +18,7 @@ platforms:
 suites:
 - name: default
   run_list:
-    - recipe[bind::master]
+    - recipe[bind::server]
   attributes:
     dns:
       master: 10.0.2.15
