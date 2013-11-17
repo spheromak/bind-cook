@@ -5,7 +5,7 @@
 //
 
 
-include "/etc/named/keys.conf"; 
+include "<%=node[:bind][:key_file] %>"; 
 
 options {
   listen-on port 53 { any; };
@@ -14,7 +14,7 @@ options {
   dump-file       "/var/named/data/cache_dump.db";
   statistics-file "/var/named/data/named_stats.txt";
   memstatistics-file "/var/named/data/named_mem_stats.txt";
-  allow-query     { <%= Dns::Templatea.match_list(@allow_query) %> };
+  allow-query     { <%= Helpers::Dns.match_list(@allow_query) %> };
   recursion <%= @recursion %>;
 
   // Disable name checking for dynamic dns allowing names with _ in them

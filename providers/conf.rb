@@ -24,6 +24,10 @@ def whyrun_supported?
 end
 
 action :create do
+  service node[:bind][:service_name] do
+    action :nothing
+  end
+
   template new_resource.config_file do
     cookbook new_resource.cookbook
     source "named.conf.erb"
@@ -35,6 +39,6 @@ action :create do
       recursion: Helpers::Dns.bool_to_str(new_resource.recursion),
       zones: new_resource.zones
     )
-    notifies :reload, "service[#{node[:bind][:service_name]}]"
+    notifies :reload, "service[#{node[:bind][:service_name]}]", :delayed
   end
 end

@@ -6,10 +6,10 @@ task :default => 'test:quick'
 
 namespace :test do
 
-  require 'strainer/rake_task'
-  Strainer::RakeTask.new(:strainer) do |s|
-    s.strainerfile = 'Strainerfile'
-  end
+ # require 'strainer/rake_task'
+ # Strainer::RakeTask.new(:strainer) do |s|
+ #   s.strainerfile = 'Strainerfile'
+ # end
 
   begin
     require 'kitchen/rake_tasks'
@@ -47,7 +47,7 @@ namespace :test do
   desc 'Run all of the quick tests.'
   task :quick do
     Rake::Task['test:quality'].invoke
-    Rake::Task['test:strainer'].invoke
+ #   Rake::Task['test:strainer'].invoke
     Rake::Task['test:tailor'].invoke
   end
 

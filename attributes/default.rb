@@ -10,6 +10,9 @@ default[:dns][:master] = node[:ipaddress]
 #<> list of dhcp servers to be added to the allow_updates these should be ipaddresses
 default[:dns][:dhcp_servers] = []
 
+#<> where to drop the keys.conf
+default[:bind][:key_file] = "/etc/named/keys.conf"
+
 #<> platform options
 if platform_family?("debian")
   default[:bind][:user] = "bind"

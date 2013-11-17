@@ -1,5 +1,5 @@
 
-template "/etc/named/keys.conf" do
+template node[:bind][:key_file] do
   owner "root"
   group node[:bind][:group]
   mode 0640

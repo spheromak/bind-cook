@@ -5,6 +5,8 @@
 #
 #  Recipe that builds up a  master for one of the datacnters
 #
+
+include_recipe 'bind::default'
 include_recipe 'bind::common'
 
 
@@ -25,7 +27,8 @@ keys = node[:dns][:keys] || {}
 resource = {}
 delegates = {}
 node[:dns][:zones].each do |zone|
-  Chef::Log.info "Setting up DNS Zone: #{zone}"
+  puts "ZONE: #{zone} "
+  log "Setting up DNS Zone: #{zone}"
   bag = data_bag_item("dns_zones", Helpers::DataBags.escape_bagname(zone))
 
   # make sure we have all the data we need
@@ -88,10 +91,10 @@ node[:dns][:zones].each do |zone|
   # parse the resource_records in this zone and get the formated entries
   #  for now disable txt records so dhcp can update
   #resources = build_resources(collect_txt(bag["resource_records"]), bag["zone_name"])
-  resources = build_resources(bag["resource_records"], bag["zone_name"])
+  resources = Helpers::Dns.build_resources(bag["resource_records"], bag["zone_name"])
 
   # build delegate list
-  delegates =  load_delegates(bag)
+  delegates =  Helpers::Dns.load_delegates(bag)
 
 
   # generate nsupdate file

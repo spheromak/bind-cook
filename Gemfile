@@ -9,6 +9,7 @@ group "develop" do
   gem 'kitchen-vagrant',
     :git => "git://github.com/opscode/kitchen-vagrant"
   gem 'busser-bats'
+  gem 'kitchen-ec2'
   gem 'busser-serverspec'
   gem 'foodcritic'
   gem 'tailor'

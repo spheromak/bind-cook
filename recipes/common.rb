@@ -73,3 +73,5 @@ logrotate_app "named_auth" do
   frequency "daily"
   rotate 3
 end
+
+

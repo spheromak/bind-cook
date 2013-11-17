@@ -22,13 +22,17 @@ def whyrun_supported?
 end
 
 action :create do
+  service node[:bind][:service_name] do
+    action :nothing
+  end
+
   updates = ""
   if new_resource.zone_data.has_key? "allow_update"
     updates = Helpers::Dns.match_list(new_resource.zone_data["allow_update"])
   end
   updates << Helpers::Dns.match_list(new_resource.allow_update)
 
-  template "/var/named/zones/#{zone}" do
+  template "/var/named/zones/#{new_resource.name}" do
     source "zone.erb"
     owner node[:bind][:user]
     group node[:bind][:group]
