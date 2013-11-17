@@ -28,7 +28,7 @@ action :create do
     cookbook new_resource.cookbook
     source "named.conf.erb"
     owner "root"
-    group bind_group
+    group node[:bind][:group]
     mode 0640
     variables(
       allow_query: Helpers::Dns.match_list(new_resource.allow_query),
