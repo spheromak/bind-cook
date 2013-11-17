@@ -8,7 +8,7 @@
 include_recipe 'bind::common'
 
 
-if default[:dns][:master] == node[:ipaddress]
+if node[:dns][:master] == node[:ipaddress]
   type = "master"
   dhcp_allow = Helpers::Dns.find_dhcp_servers(node)
 else
@@ -21,9 +21,7 @@ end
 
 #
 # gonna collect all rndc_keys here
-# we write out rndc.conf after this loop of domains
-#
-keys = {}
+keys = node[:dns][:keys] || {}
 resource = {}
 delegates = {}
 node[:dns][:zones].each do |zone|
@@ -31,7 +29,7 @@ node[:dns][:zones].each do |zone|
   bag = data_bag_item("dns_zones", Helpers::DataBags.escape_bagname(zone))
 
   # make sure we have all the data we need
-  validate_zone_data(type, bag)
+  Helpers::Dns.validate_zone_data(type, bag)
 
   # clobber merge keys
   if bag.has_key?("keys")
@@ -39,7 +37,12 @@ node[:dns][:zones].each do |zone|
   end
 
   # crate the zone record
-  build_zone(zone, type, bag, dhcp_allow)
+  bind_zone zone do
+    zone_type type
+    zone_data bag
+    allow_query "any"
+    allow_update dhcp_allow
+  end
 
   #
   # Create the Base Zone File
@@ -109,4 +112,5 @@ node[:dns][:zones].each do |zone|
 end
 
 # build out rndc
-build_keys_conf(keys)
+node.run_state[:dns_keys] = keys
+include_recipe "bind::_keys"

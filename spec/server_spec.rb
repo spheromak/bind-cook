@@ -6,4 +6,8 @@ describe 'bind::server' do
   it 'sets up named.conf via lwrp' do
     expect(chef_run).to render_file('/etc/named.conf')
   end
+
+  it 'sets up /var/named/zones/#{zone} via lwrp' do
+    expect(chef_run).to render_file('/etc/named.conf')
+  end
 end
