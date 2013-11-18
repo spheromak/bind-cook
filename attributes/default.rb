@@ -1,10 +1,20 @@
 
+#<> array of forwarder
 default[:dns][:forwarders] = []
+
+#<> array of zones this should use
 default[:dns][:zones] = []
-default[:dns][:use_bags] = true
+
+#<> hybrid, attribute, bags controlls where to pull zone data from. hybrid preferes attributes over bags.
+default[:dns][:zone_strategy] = "hybrid"
+
+#<> data for each zone, when not using bags for zones this hash is refrenced
+default[:dns][:zone_data] = {}
+
+#<> bag to look at for zones
 default[:dns][:bag_name] = "dns_zones"
 
-#<> master dns server
+#<> global master dns server
 default[:dns][:master] = ipaddress
 
 #<> list of dhcp servers to be added to the allow_updates these should be ipaddresses
