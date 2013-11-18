@@ -5,7 +5,7 @@ default[:dns][:use_bags] = true
 default[:dns][:bag_name] = "dns_zones"
 
 #<> master dns server
-default[:dns][:master] = node[:ipaddress]
+default[:dns][:master] = ipaddress
 
 #<> list of dhcp servers to be added to the allow_updates these should be ipaddresses
 default[:dns][:dhcp_servers] = []
