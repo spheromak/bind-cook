@@ -1,12 +1,19 @@
 module Helpers
   module Dns
     class << self
+      include Chef::DSL::DataQuery
+
       attr_accessor :node
 
       def bool_to_str(str)
         str ? "yes" : "no"
       end
 
+      # Takes anything that can be split or key expanded, or a string.
+      #
+      # Retruns a properly formated string of bind MATCH_LIST type
+      #  i.e. "foo; bar; baz;"
+      #
       def match_list(obj)
         list = ""
         if obj.respond_to? :join
@@ -183,7 +190,22 @@ module Helpers
       #
       # determine if node is a master
       #
-      def master? zone
+      def zone_master? zone
+        have_ip? master
+      end
+
+      #
+      # does this node have this ipaddr
+      #
+      def have_ip? addr
+        node.network.interfaces.map { |i,data|  data['addresses'].map { |ip,data| ip == addr } }.flatten.include? true
+      end
+
+      #
+      # return ip of master server from the node data or from zone data
+      #
+      def master(zone={})
+        zone.fetch 'master_address', node[:dns][:master]
       end
 
       #
@@ -201,7 +223,7 @@ module Helpers
       end
 
       #
-      # Load zone from attri or bag
+      # Load zone from attrib or bag
       #
       def hybrid_zone zone
         if node[:dns][:zone_data].has_key? zone
