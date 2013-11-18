@@ -1,6 +1,7 @@
 module Helpers
   module Dns
     class << self
+      attr_accessor :node
 
       def bool_to_str(str)
         str ? "yes" : "no"
@@ -164,7 +165,7 @@ module Helpers
       # Find dhcp servers.
       # Set them up to allow updates
       #
-      def find_dhcp_servers(node)
+      def find_dhcp_servers
         dhcp_servers=node[:dns][:dhcp_servers] || Array.new
 
         # Find dhcp servers and their ip adress
@@ -179,6 +180,51 @@ module Helpers
         dhcp_servers
       end
 
+      #
+      # determine if node is a master
+      #
+      def master? zone
+      end
+
+      #
+      # Pull a zone from bag
+      #
+      def bag_zone zone
+        zone_data = data_bag_item(node[:dns][:bag_name], Helpers::DataBags.escape_bagname(zone))
+      end
+
+      #
+      # Pull zone from attributes
+      #
+      def attr_zone zone
+        zone_data =  node[:dns][:zone_data].fetch zone
+      end
+
+      #
+      # Load zone from attri or bag
+      #
+      def hybrid_zone zone
+        if node[:dns][:zone_data].has_key? zone
+          zone_data = attr_zone zone
+        else
+          zone_data = bag_zone zone
+        end
+      end
+
+      #
+      # pull zone data from attribs or bags
+      #
+      def fetch_zone zone
+        case node[:dns][:zone_strategy]
+        when "hybrid"
+          zone_data = hybrid_zone zone
+        when "bags"
+          zone_data = bag_zone zone
+        else
+          zone_data = attr_zone zone
+        end
+        zone_data
+      end
     end
   end
 end
