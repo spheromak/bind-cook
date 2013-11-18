@@ -3,19 +3,13 @@
 # Cookbook:: Bind
 # Recipe:: server
 #
-#  Recipe that builds up a  master for one of the datacnters
+# Build a bind server from bags and other goodness
 #
 
 include_recipe 'bind::default'
 include_recipe 'bind::common'
 
-
-if node[:dns][:master] == node[:ipaddress]
-  type = "master"
-  dhcp_allow = Helpers::Dns.find_dhcp_servers(node)
-else
-  type = "slave"
-end
+Helpers::Dns.node = node
 
 bind_conf "server" do
   zones node[:dns][:zones]
@@ -27,22 +21,30 @@ keys = node[:dns][:keys] || {}
 resource = {}
 delegates = {}
 node[:dns][:zones].each do |zone|
-  puts "ZONE: #{zone} "
+
+  zone_data = Helpers::Dns.fetch_zone zone
+
+  if Helpers::Dns.zone_master? node, zone_data
+    type = "master"
+    dhcp_allow = Helpers::Dns.find_dhcp_servers(node)
+  else
+    type = "slave"
+  end
+
   log "Setting up DNS Zone: #{zone}"
-  bag = data_bag_item("dns_zones", Helpers::DataBags.escape_bagname(zone))
 
   # make sure we have all the data we need
-  Helpers::Dns.validate_zone_data(type, bag)
+  Helpers::Dns.validate_zone_data(type, zone_data)
 
   # clobber merge keys
-  if bag.has_key?("keys")
-    keys = Chef::Mixin::DeepMerge.merge(keys, bag["keys"])
+  if zone_data.has_key?("keys")
+    keys = Chef::Mixin::DeepMerge.merge(keys, zone_data["keys"])
   end
 
   # crate the zone record
   bind_zone zone do
     zone_type type
-    zone_data bag
+    zone_data zone_data
     allow_query "any"
     allow_update dhcp_allow
   end
@@ -58,7 +60,7 @@ node[:dns][:zones].each do |zone|
     owner node[:bind][:user]
     group node[:bind][:group]
     mode  0640
-    variables(:name => zone, :data => bag)
+    variables(:name => zone, :data => zone_data)
     notifies :restart, "service[#{node[:bind][:service_name]}]"
   end
 
@@ -91,11 +93,10 @@ node[:dns][:zones].each do |zone|
   # parse the resource_records in this zone and get the formated entries
   #  for now disable txt records so dhcp can update
   #resources = build_resources(collect_txt(bag["resource_records"]), bag["zone_name"])
-  resources = Helpers::Dns.build_resources(bag["resource_records"], bag["zone_name"])
+  resources = Helpers::Dns.build_resources(zone_data["resource_records"], zone_data["zone_name"])
 
   # build delegate list
-  delegates =  Helpers::Dns.load_delegates(bag)
-
+  delegates =  Helpers::Dns.load_delegates(zone_data)
 
   # generate nsupdate file
   template "/var/named/#{type}/rr/#{zone}" do
@@ -104,7 +105,7 @@ node[:dns][:zones].each do |zone|
     group node[:bind][:group]
     mode  0640
     variables(
-      :zone => bag["zone_name"],
+      :zone => zone_data["zone_name"],
       :records =>  resources,
       # set the ttl for delegates
       :ttl => "172800",
