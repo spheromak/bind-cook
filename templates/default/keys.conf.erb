@@ -8,9 +8,10 @@ key "<%= key %>" {
 };
 <% end %>
 
-
+<% unless @keys.empty? %>
 controls {
   inet * port 953 allow {any;} keys { <%= Helpers::Dns.match_list(@keys) %> };
   inet * port 54  allow {any;} keys { <%= Helpers::Dns.match_list(@keys) %> };
 };
+<% end %>
 
