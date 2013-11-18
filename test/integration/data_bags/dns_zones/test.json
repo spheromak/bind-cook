@@ -10,7 +10,10 @@
   "name_servers": { "localhost": "127.0.0.1" },
   "master_address": "127.0.0.1",
   "keys": {
-    "test": "DTngw5O8I5Axx631GjQ9pA=="
+    "test": {
+      "algo": "hmac-md5",
+      "secret": "DTngw5O8I5Axx631GjQ9pA=="
+    }
   },
   "resource_records": {
     "test1": { "A": "10.0.2.123" }

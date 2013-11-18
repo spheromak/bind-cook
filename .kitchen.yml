@@ -21,6 +21,11 @@ suites:
     - recipe[bind::server]
   attributes:
     dns:
-      master: 10.0.2.15
+      master: 127.0.0.1
       zones:
         - test
+      keys:
+        atrribs:
+          algo: hmac-md5
+          secret: DTngw5O8I5Axx631GjQ9pA==
+      
