@@ -6,7 +6,7 @@ module Helpers
       attr_accessor :node
 
       def bool_to_str(str)
-        str ? "yes" : "no"
+        str ? 'yes' : 'no'
       end
 
       # Takes anything that can be split or key expanded, or a string.
@@ -15,18 +15,18 @@ module Helpers
       #  i.e. "foo; bar; baz;"
       #
       def match_list(obj)
-        list = ""
+        list = ''
         if obj.respond_to? :join
-          list = obj.join "; "
+          list = obj.join '; '
         elsif obj.respond_to? :split
           list = match_list(obj.split "\s")
         elsif obj.respond_to? :keys
           list = match_list(obj.keys.map { |k| k.to_s })
         else
-          raise ArgumentError, "match_list only knows how to dea with things that respond to: join, split, keys"
+          fail ArgumentError, 'match_list only knows how to dea with things that respond to: join, split, keys'
         end
         list.strip!
-        list +=";" unless list =~ /.*;$/
+        list += ';' unless list =~ /.*;$/
         list
       end
 
@@ -35,7 +35,7 @@ module Helpers
       # TODO: TTL should be per-entry IMO
       # TODO: fix cane ABC complexity:
       # libraries/helpers_dns.rb  Helpers::Dns#build_resources  28
-      def build_resources(data, zone, ttl="3600")
+      def build_resources(data, zone, ttl = '3600')
         ptr = []
         resources = []
         # unroll resource_records and pass in lists for the template
@@ -52,14 +52,14 @@ module Helpers
 
             delete_first = nil
             # see if we want to remove records before adding
-            if data[rr].has_key?("delete_first") and
-              data[rr]["delete_first"].nil? == false and
-              data[rr]["delete_first"].to_s.downcase == "true"
+            if data[rr].key?('delete_first') and
+              data[rr]['delete_first'].nil? == false and
+              data[rr]['delete_first'].to_s.downcase == 'true'
 
               delete_first = true
             end
 
-            if data[rr].has_key?("delete")
+            if data[rr].key?('delete')
               resources << "delete #{host}"
             end
 
@@ -75,14 +75,14 @@ module Helpers
                 # well ignore everything else if we run into ptr records
                 ptr  <<  "add #{host} #{ttl} #{type.upcase}  #{val}"
 
-              when "A", "a"
+              when 'A', 'a'
                 resources << "delete  #{host}  #{type.upcase} "  if delete_first
                 resources << "add #{host} #{ttl} #{type.upcase}  #{val}"
 
               when /TXT/i
                 resources << "delete  #{host} #{type.upcase} "  if delete_first
                 if val.class == Array
-                  strings = ""
+                  strings = ''
                   val.each { |field| strings << " \"#{field}\" " }
                   resources << "add #{host} #{ttl} TXT  #{strings}"
                 else
@@ -110,7 +110,7 @@ module Helpers
         end
 
         return resources if ptr.empty?
-        return ptr
+        ptr
       end
 
 
@@ -120,8 +120,8 @@ module Helpers
       #
       def load_delegates(bag)
         delegates = []
-        if bag.has_key?("delegate")
-          bag["delegate"].each do |zone|
+        if bag.key?('delegate')
+          bag['delegate'].each do |zone|
             delegates << data_bag_item(:dns_zones, data_bag_fqdn(zone))
           end
         end
@@ -135,33 +135,33 @@ module Helpers
       # to ensure we have them in this bag
       #
       def validate_zone_data(type, data)
-        keys=%w/ ttl refresh retry expire minimum
-          zone_name
-          authority
-          email
-          name_servers
-          master_address
-          allow_query
-          zone_name
+        keys = %w/ ttl refresh retry expire minimum
+                   zone_name
+                   authority
+                   email
+                   name_servers
+                   master_address
+                   allow_query
+                   zone_name
           /
 
         case type
         when /slave/i
         when /master/i
-          keys << "allow_update"
+          keys << 'allow_update'
         end
 
         keys.each do |key|
-          unless data.has_key?(key)
+          unless data.key?(key)
             error = "Couldn't find required config option '#{key}' "
             error << "in zone #{data["zone_name"]}"
-            raise Chef::Exceptions::AttributeNotFound error
+            fail Chef::Exceptions::AttributeNotFound error
           end
 
           if data[key].empty?
             error = "Config option #{key} is empty, "
             error << "and should have a value in zone #{data["zone_name"]}"
-            raise Chef::Exceptions::AttributeNotFound error
+            fail Chef::Exceptions::AttributeNotFound error
           end
         end
       end
@@ -173,14 +173,14 @@ module Helpers
       # Set them up to allow updates
       #
       def find_dhcp_servers
-        dhcp_servers=node[:dns][:dhcp_servers] || Array.new
+        dhcp_servers = node[:dns][:dhcp_servers] || []
 
         # Find dhcp servers and their ip adress
         unless node[:dns][:dhcp_servers].empty?
-          dhcp_servers = Discovery.all("dhcp_server",
-            :node => node,
-            :empty_ok => true,
-            :environment_aware => true
+          dhcp_servers = Discovery.all('dhcp_server',
+                                       node: node,
+                                       empty_ok: true,
+                                       environment_aware: true
           ).map { |n| n.ipaddress }
         end
 
@@ -190,43 +190,43 @@ module Helpers
       #
       # determine if node is a master
       #
-      def zone_master? zone
+      def zone_master?(zone)
         have_ip? master
       end
 
       #
       # does this node have this ipaddr
       #
-      def have_ip? addr
-        node.network.interfaces.map { |i,data|  data['addresses'].map { |ip,data| ip == addr } }.flatten.include? true
+      def have_ip?(addr)
+        node.network.interfaces.map { |i, data|  data['addresses'].map { |ip, data| ip == addr } }.flatten.include? true
       end
 
       #
       # return ip of master server from the node data or from zone data
       #
-      def master(zone={})
+      def master(zone = {})
         zone.fetch 'master_address', node[:dns][:master]
       end
 
       #
       # Pull a zone from bag
       #
-      def bag_zone zone
+      def bag_zone(zone)
         zone_data = data_bag_item(node[:dns][:bag_name], Helpers::DataBags.escape_bagname(zone))
       end
 
       #
       # Pull zone from attributes
       #
-      def attr_zone zone
+      def attr_zone(zone)
         zone_data =  node[:dns][:zone_data].fetch zone
       end
 
       #
       # Load zone from attrib or bag
       #
-      def hybrid_zone zone
-        if node[:dns][:zone_data].has_key? zone
+      def hybrid_zone(zone)
+        if node[:dns][:zone_data].key? zone
           zone_data = attr_zone zone
         else
           zone_data = bag_zone zone
@@ -236,11 +236,11 @@ module Helpers
       #
       # pull zone data from attribs or bags
       #
-      def fetch_zone zone
+      def fetch_zone(zone)
         case node[:dns][:zone_strategy]
-        when "hybrid"
+        when 'hybrid'
           zone_data = hybrid_zone zone
-        when "bags"
+        when 'bags'
           zone_data = bag_zone zone
         else
           zone_data = attr_zone zone

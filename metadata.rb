@@ -1,7 +1,7 @@
-name             "bind"
-maintainer       "Jesse Nelson"
-maintainer_email "spheromak@gmail.com"
-description      "Bind Cookbooks driven via DataBags"
+name             'bind'
+maintainer       'Jesse Nelson'
+maintainer_email 'spheromak@gmail.com'
+description      'Bind Cookbooks driven via DataBags'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '2.0.3'
 
@@ -9,8 +9,8 @@ version '2.0.3'
   supports os
 end
 
-depends "apparmor"
-depends "discovery"
-depends "helpers-databags"
-depends "logrotate"
-depends "ruby-helper"
+depends 'apparmor'
+depends 'discovery'
+depends 'helpers-databags'
+depends 'logrotate'
+depends 'ruby-helper'

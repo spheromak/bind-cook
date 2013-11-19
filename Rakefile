@@ -6,7 +6,28 @@ task :default => 'test:quick'
 
 namespace :test do
 
- # require 'strainer/rake_task'
+  begin
+    require 'rubocop/rake_task'
+    desc 'Runs Rubocop against the cookbook.'
+    task :rubocop do
+      Rubocop::RakeTask.new
+    end
+  rescue LoadError
+    warn "Rubocop not loaded, skipping style enforcement"
+  end
+
+  begin
+    require 'foodcritic'
+
+    task :default => [:foodcritic]
+    FoodCritic::Rake::LintTask.new do |t|
+      t.options = {:fail_tags => %w/correctness services libraries deprecated/ }
+    end
+  rescue LoadError
+    warn "Foodcritic Is missing ZOMG"
+  end
+
+  # require 'strainer/rake_task'
  # Strainer::RakeTask.new(:strainer) do |s|
  #   s.strainerfile = 'Strainerfile'
  # end
@@ -36,21 +57,12 @@ namespace :test do
     warn "cane not available, quality task not provided."
   end
 
-  begin
-    require 'tailor/rake_task'
-    Tailor::RakeTask.new
-  rescue LoadError
-    warn "Tailor gem not installed, now the code will look like crap!"
-  end
-
-
   desc 'Run all of the quick tests.'
   task :quick do
+    Rake::Task['test:foodcritic'].invoke
     Rake::Task['test:quality'].invoke
- #   Rake::Task['test:strainer'].invoke
-    Rake::Task['test:tailor'].invoke
+    Rake::Task['test:rubocop'].invoke
   end
-
 
   desc 'Run _all_ the tests. Go get a coffee.'
   task :complete do

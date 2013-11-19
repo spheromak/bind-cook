@@ -21,8 +21,8 @@
 #
 #
 
-if platform_family?("debian")
-  include_recipe "apparmor"
+if platform_family?('debian')
+  include_recipe 'apparmor'
 end
 
 package node[:bind][:package] do
@@ -33,26 +33,26 @@ package node[:bind][:package_utils] do
   action :install
 end
 
-directory "/etc/bind"
+directory '/etc/bind'
 
-file "/etc/named.conf" do
-  owner "root"
+file '/etc/named.conf' do
+  owner 'root'
   group node[:bind][:group]
   mode 0640
 end
 
-template "/etc/bind/named.conf.options" do
-  source "named.conf.options.erb"
+template '/etc/bind/named.conf.options' do
+  source 'named.conf.options.erb'
   variables(
-    :forwarders => node[:dns][:forwarders]
+    forwarders: node[:dns][:forwarders]
   )
   mode 0644
-  owner "root"
+  owner 'root'
   group node[:bind][:group]
   notifies :restart, "service[#{node[:bind][:service_name]}]"
 end
 
 service node[:bind][:service_name] do
-  supports :restart => true, :status => true, :reload => true
+  supports restart: true, status: true, reload: true
   action :enable
 end

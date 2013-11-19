@@ -12,7 +12,7 @@ group "develop" do
   gem 'kitchen-ec2'
   gem 'busser-serverspec'
   gem 'foodcritic'
-  gem 'tailor'
+  gem 'rubocop'
   gem 'cane'
   gem 'guard'
   gem 'guard-rake'

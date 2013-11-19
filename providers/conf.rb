@@ -30,8 +30,8 @@ action :create do
 
   template new_resource.config_file do
     cookbook new_resource.cookbook
-    source "named.conf.erb"
-    owner "root"
+    source 'named.conf.erb'
+    owner 'root'
     group node[:bind][:group]
     mode 0640
     variables(

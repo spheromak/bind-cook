@@ -1,23 +1,23 @@
 actions :create
 default_action :create
 
-#<> should terminate as a proper bind string
+# <> should terminate as a proper bind string
 attribute :config_file,
-  kind_of: String,
-  default: "/etc/named.conf",
-  name_attribute: true
+          kind_of: String,
+          default: '/etc/named.conf',
+          name_attribute: true
 
 attribute :allow_query,
-  kind_of: Array,
-  default: [ "any" ]
+          kind_of: Array,
+          default: ['any']
 
 attribute :recursion,
-  kind_of: [TrueClass, FalseClass],
-  default: true
+          kind_of: [TrueClass, FalseClass],
+          default: true
 
 attribute :zones,
-  kind_of: Array
+          kind_of: Array
 
 attribute :cookbook,
-  kind_of: String,
-  default: "bind"
+          kind_of: String,
+          default: 'bind'

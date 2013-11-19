@@ -1,39 +1,39 @@
 
-#<> array of forwarder
+# <> array of forwarder
 default[:dns][:forwarders] = []
 
-#<> array of zones this should use
+# <> array of zones this should use
 default[:dns][:zones] = []
 
-#<> hybrid, attribute, bags controlls where to pull zone data from. hybrid preferes attributes over bags.
-default[:dns][:zone_strategy] = "hybrid"
+# <> hybrid, attribute, bags controlls where to pull zone data from. hybrid preferes attributes over bags.
+default[:dns][:zone_strategy] = 'hybrid'
 
-#<> data for each zone, when not using bags for zones this hash is refrenced
+# <> data for each zone, when not using bags for zones this hash is refrenced
 default[:dns][:zone_data] = {}
 
-#<> bag to look at for zones
-default[:dns][:bag_name] = "dns_zones"
+# <> bag to look at for zones
+default[:dns][:bag_name] = 'dns_zones'
 
-#<> global master dns server
-default[:dns][:master] = ipaddress
+# <> global master dns server
+default[:dns][:master] = node[:ipaddress]
 
-#<> list of dhcp servers to be added to the allow_updates these should be ipaddresses
+# <> list of dhcp servers to be added to the allow_updates these should be ipaddresses
 default[:dns][:dhcp_servers] = []
 
-#<> where to drop the keys.conf
-default[:bind][:key_file] = "/etc/named/keys.conf"
+# <> where to drop the keys.conf
+default[:bind][:key_file] = '/etc/named/keys.conf'
 
-#<> platform options
-if platform_family?("debian")
-  default[:bind][:user] = "bind"
-  default[:bind][:group] = "bind"
-  default[:bind][:package] = "bind9"
-  default[:bind][:package_utils] = "bind9utils"
-  default[:bind][:service_name] = "bind9"
-elsif platform_family?("rhel")
-  default[:bind][:user] = "named"
-  default[:bind][:group] = "named"
-  default[:bind][:package] = "bind"
-  default[:bind][:package_utils] = "bind-utils"
-  default[:bind][:service_name] = "named"
+# <> platform options
+if platform_family?('debian')
+  default[:bind][:user] = 'bind'
+  default[:bind][:group] = 'bind'
+  default[:bind][:package] = 'bind9'
+  default[:bind][:package_utils] = 'bind9utils'
+  default[:bind][:service_name] = 'bind9'
+elsif platform_family?('rhel')
+  default[:bind][:user] = 'named'
+  default[:bind][:group] = 'named'
+  default[:bind][:package] = 'bind'
+  default[:bind][:package_utils] = 'bind-utils'
+  default[:bind][:service_name] = 'named'
 end

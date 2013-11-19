@@ -26,23 +26,23 @@ action :create do
     action :nothing
   end
 
-  updates = ""
-  if new_resource.zone_data.has_key? "allow_update"
-    updates = Helpers::Dns.match_list(new_resource.zone_data["allow_update"])
+  updates = ''
+  if new_resource.zone_data.key? 'allow_update'
+    updates = Helpers::Dns.match_list(new_resource.zone_data['allow_update'])
   end
   updates << Helpers::Dns.match_list(new_resource.allow_update)
 
   template "/var/named/zones/#{new_resource.name}" do
-    source "zone.erb"
+    source 'zone.erb'
     owner node[:bind][:user]
     group node[:bind][:group]
     mode  0640
     variables(
-      :name => new_resource.name,
-      :allow_query  => Helpers::Dns.match_list(new_resource.allow_query),
-      :allow_update => updates,
-      :bag => new_resource.zone_data,
-      :type => new_resource.zone_type
+      name: new_resource.name,
+      allow_query: Helpers::Dns.match_list(new_resource.allow_query),
+      allow_update: updates,
+      bag: new_resource.zone_data,
+      type: new_resource.zone_type
     )
     notifies :reload, "service[#{node[:bind][:service_name]}]"
   end
