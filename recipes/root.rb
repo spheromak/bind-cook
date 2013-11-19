@@ -1,4 +1,4 @@
-#
+# Encoding: utf-8
 # Author:: Jesse Nelson <spheromak@gmail.com>
 # Cookbook:: Bind
 # Recipe:: dc_master

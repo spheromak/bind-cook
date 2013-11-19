@@ -1,3 +1,4 @@
+# Encoding: utf-8
 require 'chefspec'
 
 # describe 'test_cook_skeleton::default' do

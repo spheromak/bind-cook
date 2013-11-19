@@ -1,4 +1,4 @@
-#
+# Encoding: utf-8
 # Author:: Jesse Nelson <spheromak@gmail.com>
 #
 # based on the bind cookbook included in the dell crowbar project:

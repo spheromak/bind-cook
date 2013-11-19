@@ -1,3 +1,4 @@
+# Encoding: utf-8
 default_action :create
 
 attribute :allow_query, default: 'none'

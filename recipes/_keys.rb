@@ -1,4 +1,4 @@
-
+# Encoding: utf-8
 template node[:bind][:key_file] do
   owner 'root'
   group node[:bind][:group]

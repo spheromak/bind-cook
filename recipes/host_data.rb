@@ -1,4 +1,4 @@
-
+# Encoding: utf-8
 #
 #  This recipe should store host data back into a "node_data" bag
 #

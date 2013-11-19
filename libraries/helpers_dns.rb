@@ -1,3 +1,4 @@
+# Encoding: utf-8
 module Helpers
   module Dns
     class << self
@@ -52,8 +53,8 @@ module Helpers
 
             delete_first = nil
             # see if we want to remove records before adding
-            if data[rr].key?('delete_first') and
-              data[rr]['delete_first'].nil? == false and
+            if data[rr].key?('delete_first') &&
+              data[rr]['delete_first'].nil? == false &&
               data[rr]['delete_first'].to_s.downcase == 'true'
 
               delete_first = true

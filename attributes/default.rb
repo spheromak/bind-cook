@@ -1,4 +1,4 @@
-
+# Encoding: utf-8
 # <> array of forwarder
 default[:dns][:forwarders] = []
 

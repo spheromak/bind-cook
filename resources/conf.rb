@@ -1,3 +1,4 @@
+# Encoding: utf-8
 actions :create
 default_action :create
 

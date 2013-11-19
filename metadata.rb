@@ -1,3 +1,4 @@
+# Encoding: utf-8
 name             'bind'
 maintainer       'Jesse Nelson'
 maintainer_email 'spheromak@gmail.com'
