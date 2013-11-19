@@ -196,7 +196,7 @@ module Helpers
       # does this node have this ipaddr
       #
       def have_ip?(addr)
-        node.network.interfaces.map { |i, data|  data['addresses'].map { |ip, data| ip == addr } }.flatten.include? true
+        node[:network][:interfaces].map { |i, data|  data['addresses'].map { |ip, data| ip == addr } }.flatten.include? true
       end
 
       #

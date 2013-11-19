@@ -6,32 +6,10 @@ task :default => 'test:quick'
 
 namespace :test do
 
-  begin
-    require 'rubocop/rake_task'
-
-    desc 'Runs Rubocop against the cookbook.'
-    task :rubocop do
-      Rubocop::RakeTask.new
-    end
-  rescue LoadError
-    warn "Rubocop not loaded, skipping style enforcement"
+  RSpec::Core::RakeTask.new(:spec) do |t|
+    t.pattern = Dir.glob('test/spec/**/*_spec.rb')
+    t.rspec_opts = "--color -f d"
   end
-
-  begin
-    require 'foodcritic'
-
-    task :default => [:foodcritic]
-    FoodCritic::Rake::LintTask.new do |t|
-      t.options = {:fail_tags => %w/correctness services libraries deprecated/ }
-    end
-  rescue LoadError
-    warn "Foodcritic Is missing ZOMG"
-  end
-
-  # require 'strainer/rake_task'
- # Strainer::RakeTask.new(:strainer) do |s|
- #   s.strainerfile = 'Strainerfile'
- # end
 
   begin
     require 'kitchen/rake_tasks'
@@ -48,7 +26,6 @@ namespace :test do
       canefile = ".cane"
       cane.abc_max = 10
       cane.abc_glob =  '{recipes,libraries,resources,providers}/**/*.rb'
-      cane.abc_exclude = %w(Helpers::Dns#build_resources Helpers::Dns#collect_txt)
       cane.no_style = true
       cane.parallel = true
     end
@@ -58,12 +35,33 @@ namespace :test do
     warn "cane not available, quality task not provided."
   end
 
+  begin
+    require 'foodcritic'
+
+    task :default => [:foodcritic]
+    FoodCritic::Rake::LintTask.new do |t|
+      t.options = {:fail_tags => %w/correctness services libraries deprecated/ }
+    end
+  rescue LoadError
+    warn "Foodcritic Is missing ZOMG"
+  end
+
+  begin
+    require 'tailor/rake_task'
+    Tailor::RakeTask.new
+  rescue LoadError
+    warn "Tailor gem not installed, now the code will look like crap!"
+  end
+
+
   desc 'Run all of the quick tests.'
   task :quick do
-    Rake::Task['test:rubocop'].invoke
-    Rake::Task['test:foodcritic'].invoke
     Rake::Task['test:quality'].invoke
+    Rake::Task['test:foodcritic'].invoke
+    Rake::Task['test:spec'].invoke
+    Rake::Task['test:tailor'].invoke
   end
+
 
   desc 'Run _all_ the tests. Go get a coffee.'
   task :complete do
