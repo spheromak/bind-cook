@@ -1,5 +1,3 @@
 #Strainerfile
-chefspec: bundle exec rspec --color -f d
-#rubocop: bundle exec rubocop
-#knife test: bundle exec knife cookbook test $COOKBOOK
-#foodcritic: bundle exec foodcritic -f any $COOKBOOK
+lint: rubocop 
+spec: rspec --color 
