@@ -26,4 +26,8 @@ describe 'Helpers::Dns.match_list' do
   it 'handles Hashes' do
     Helpers::Dns.match_list(one: '1', two: '2', three: '3').should eq @matched
   end
+
+  it 'handles empty strings' do
+    Helpers::Dns.match_list('').should eq ''
+  end
 end

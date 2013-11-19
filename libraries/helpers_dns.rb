@@ -27,7 +27,9 @@ module Helpers
           fail ArgumentError, 'match_list only knows how to dea with things that respond to: join, split, keys'
         end
         list.strip!
-        list += ';' unless list =~ /.*;$/
+        unless list =~ /.*;$/ or list.empty?
+          list += ';'
+        end
         list
       end
 
