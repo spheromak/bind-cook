@@ -13,16 +13,18 @@ include_recipe 'bind::common'
 Helpers::Dns.node = node
 
 bind_conf 'server' do
+  config_file node[:bind][:conf_file]
   zones node[:dns][:zones]
 end
 
 #
-# gonna collect all rndc_keys here
+# we do this first loop and store because we need to extract keys.
+#
 keys = node[:dns][:keys] || {}
-resource = {}
-delegates = {}
+zones = {}
+type = ""
+dhcp_allow= ""
 node[:dns][:zones].each do |zone|
-
   zone_data = Helpers::Dns.fetch_zone zone
 
   if Helpers::Dns.zone_master? zone_data
@@ -32,15 +34,26 @@ node[:dns][:zones].each do |zone|
     type = 'slave'
   end
 
-  log "Setting up DNS Zone: #{zone}"
-
   # make sure we have all the data we need
   Helpers::Dns.validate_zone_data(type, zone_data)
 
-  # clobber merge keys
+  # merge keys
   if zone_data.key?('keys')
-    keys = Chef::Mixin::DeepMerge.merge(keys, zone_data['keys'])
+    node.run_state[:dns_keys] = Chef::Mixin::DeepMerge.merge(keys, zone_data['keys'])
   end
+
+  zones[zone] = zone_data
+end
+
+#
+# build out rndc keys
+#
+include_recipe 'bind::_keys'
+
+resource = {}
+delegates = {}
+zones.each do |zone, zone_data|
+  log "Setting up DNS Zone: #{zone}"
 
   # crate the zone record
   bind_zone zone do
@@ -62,7 +75,7 @@ node[:dns][:zones].each do |zone|
     group node[:bind][:group]
     mode  0640
     variables(name: zone, data: zone_data)
-    notifies :restart, "service[#{node[:bind][:service_name]}]"
+    notifies :restart, "service[#{node[:bind][:service_name]}]", :immediately
   end
 
 
@@ -73,21 +86,7 @@ node[:dns][:zones].each do |zone|
   #
   execute "nsupdate_#{zone}" do
     action :nothing
-    #
-    # due to a bug in nsupdate it will always assert even when it succeds
-    # we need to grep and us returns 1  to ensure our grep oens't match (fail condition)
-    # nsupdate bug: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=622084
-    # command "nsupdate -v /var/named/#{type}/rr/#{zone}  2>&1 | grep 'update failed:' "
-    # returns 1
-    opts = ''
-    case node[:platform_family]
-    when 'rhel'
-      opts = '-v'
-    when 'debian'
-      opts = '-lv'
-    end
-
-    command "nsupdate #{opts} /var/named/#{type}/rr/#{zone}"
+    command "nsupdate -lv /var/named/#{type}/rr/#{zone}"
   end
 
   # collect txt record info from searchs on this domain
@@ -116,6 +115,3 @@ node[:dns][:zones].each do |zone|
   end
 end
 
-# build out rndc
-node.run_state[:dns_keys] = keys
-include_recipe 'bind::_keys'

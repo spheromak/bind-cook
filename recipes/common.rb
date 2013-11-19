@@ -52,7 +52,7 @@ end
 end
 
 # setup logs
-['/var/log/named-auth.info', '/var/log/update-debug.log'].each do |log|
+%w{/var/log/named-auth.info /var/log/update-debug.log}.each do |log|
   file log do
     owner node[:bind][:user]
     group node[:bind][:group]
@@ -67,7 +67,7 @@ cookbook_file "#{node[:bind][:conf_dir]}/named.rfc1912.zones" do
   mode 0664
 end
 
-cookbook_file /var/named/named.ca do
+cookbook_file '/var/named/named.ca' do
   owner node[:bind][:user]
   group node[:bind][:group]
   mode 0664

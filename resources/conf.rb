@@ -5,7 +5,7 @@ default_action :create
 # <> should terminate as a proper bind string
 attribute :config_file,
           kind_of: String,
-          default: '/etc/named.conf',
+          default: '/etc/bind/named.conf',
           name_attribute: true
 
 attribute :allow_query,

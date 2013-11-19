@@ -40,4 +40,5 @@ elsif platform_family?('rhel')
   default[:bind][:package] = 'bind'
   default[:bind][:service_name]  = 'named'
   default[:bind][:package_utils] = 'bind-utils'
+ default[:bind][:conf_dir]  = '/etc'
 end

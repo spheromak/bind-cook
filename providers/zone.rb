@@ -45,6 +45,6 @@ action :create do
       bag: new_resource.zone_data,
       type: new_resource.zone_type
     )
-    notifies :reload, "service[#{node[:bind][:service_name]}]"
+    notifies :reload, "service[#{node[:bind][:service_name]}]", :delayed
   end
 end
