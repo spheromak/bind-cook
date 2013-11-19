@@ -113,7 +113,6 @@ module Helpers
         ptr
       end
 
-
       #
       # Takes a bag looks for delegate key.
       # returns array of bags that match those
@@ -127,8 +126,6 @@ module Helpers
         end
         delegates
       end
-
-
 
       #
       # do some checks on a data structure
@@ -165,8 +162,6 @@ module Helpers
           end
         end
       end
-
-
 
       #
       # Find dhcp servers.
@@ -212,14 +207,14 @@ module Helpers
       # Pull a zone from bag
       #
       def bag_zone(zone)
-        zone_data = data_bag_item(node[:dns][:bag_name], Helpers::DataBags.escape_bagname(zone))
+        data_bag_item(node[:dns][:bag_name], Helpers::DataBags.escape_bagname(zone))
       end
 
       #
       # Pull zone from attributes
       #
       def attr_zone(zone)
-        zone_data =  node[:dns][:zone_data].fetch zone
+        node[:dns][:zone_data].fetch zone
       end
 
       #
@@ -227,9 +222,9 @@ module Helpers
       #
       def hybrid_zone(zone)
         if node[:dns][:zone_data].key? zone
-          zone_data = attr_zone zone
+          attr_zone zone
         else
-          zone_data = bag_zone zone
+          bag_zone zone
         end
       end
 

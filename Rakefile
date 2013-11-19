@@ -8,6 +8,7 @@ namespace :test do
 
   begin
     require 'rubocop/rake_task'
+
     desc 'Runs Rubocop against the cookbook.'
     task :rubocop do
       Rubocop::RakeTask.new
@@ -59,9 +60,9 @@ namespace :test do
 
   desc 'Run all of the quick tests.'
   task :quick do
+    Rake::Task['test:rubocop'].invoke
     Rake::Task['test:foodcritic'].invoke
     Rake::Task['test:quality'].invoke
-    Rake::Task['test:rubocop'].invoke
   end
 
   desc 'Run _all_ the tests. Go get a coffee.'
