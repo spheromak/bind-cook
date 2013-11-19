@@ -51,7 +51,7 @@ zone "." IN {
   file "named.ca";
 };
 
-include "/etc/named.rfc1912.zones";
+include "<%= node[:bind][:conf_dir] %>/named.rfc1912.zones";
 
 <% @zones.each do |file| %>
 include "/var/named/zones/<%= file %>";

@@ -4,7 +4,6 @@
 ; Do not edit this by hand 
 ;
 zone <%= @zone %>
-server <%= node.ipaddress %>
 <% unless @records.nil? or  @records.empty? -%>
   <% @records.sort.reverse.each do |rr| -%>
 update <%= rr %> 

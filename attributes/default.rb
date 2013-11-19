@@ -23,17 +23,21 @@ default[:dns][:dhcp_servers] = []
 # <> where to drop the keys.conf
 default[:bind][:key_file] = '/etc/named/keys.conf'
 
+default[:bind][:conf_file] = '/etc/named.conf'
+default[:bind][:conf_dir]  = '/etc/named'
 # <> platform options
 if platform_family?('debian')
-  default[:bind][:user] = 'bind'
-  default[:bind][:group] = 'bind'
-  default[:bind][:package] = 'bind9'
+  default[:bind][:user]      = 'bind'
+  default[:bind][:group]     = 'bind'
+  default[:bind][:package]   = 'bind9'
+  default[:bind][:conf_file] = '/etc/bind/named.conf'
+  default[:bind][:conf_dir]  = '/etc/bind'
+  default[:bind][:service_name]  = 'bind9'
   default[:bind][:package_utils] = 'bind9utils'
-  default[:bind][:service_name] = 'bind9'
 elsif platform_family?('rhel')
-  default[:bind][:user] = 'named'
-  default[:bind][:group] = 'named'
+  default[:bind][:user]    = 'named'
+  default[:bind][:group]   = 'named'
   default[:bind][:package] = 'bind'
+  default[:bind][:service_name]  = 'named'
   default[:bind][:package_utils] = 'bind-utils'
-  default[:bind][:service_name] = 'named'
 end

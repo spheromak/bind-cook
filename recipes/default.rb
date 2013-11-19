@@ -33,15 +33,15 @@ package node[:bind][:package_utils] do
   action :install
 end
 
-directory '/etc/bind'
+directory node[:bind][:conf_dir]
 
-file '/etc/named.conf' do
+file node[:bind][:conf_file] do
   owner 'root'
   group node[:bind][:group]
   mode 0640
 end
 
-template '/etc/bind/named.conf.options' do
+template "#{node[:bind][:conf_dir]}/named.conf.options" do
   source 'named.conf.options.erb'
   variables(
     forwarders: node[:dns][:forwarders]

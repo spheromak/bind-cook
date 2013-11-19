@@ -61,12 +61,16 @@ end
 
 end
 
-%w{ /etc/named.rfc1912.zones /var/named/named.ca }.each do |cook_file|
-  cookbook_file cook_file do
-    owner node[:bind][:user]
-    group node[:bind][:group]
-    mode 0664
-  end
+cookbook_file "#{node[:bind][:conf_dir]}/named.rfc1912.zones" do
+  owner node[:bind][:user]
+  group node[:bind][:group]
+  mode 0664
+end
+
+cookbook_file /var/named/named.ca do
+  owner node[:bind][:user]
+  group node[:bind][:group]
+  mode 0664
 end
 
 logrotate_app 'named_auth' do
