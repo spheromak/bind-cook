@@ -4,7 +4,7 @@
   if [ -f /etc/debian_version ]; then
     service bind9 status
   elif [ -f /etc/redhat-release ]; then
-    service names status
+    service named status
   fi
 }
 
