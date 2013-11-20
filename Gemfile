@@ -4,20 +4,12 @@ source  'https://rubygems.org'
 gem 'berkshelf'
 
 group "develop" do
-  gem 'test-kitchen',
-    :git => "git://github.com/opscode/test-kitchen.git"
-  gem 'kitchen-vagrant',
-    :git => "git://github.com/opscode/kitchen-vagrant"
   gem 'busser-bats'
-  gem 'kitchen-ec2'
   gem 'busser-serverspec'
   gem 'foodcritic'
   gem 'rubocop'
   gem 'cane'
   gem 'guard'
-  gem 'guard-rake'
-  gem 'guard-kitchen'
-  gem 'knife-cookbook-doc'
   gem 'chefspec', '>= 3.0.0'
   gem 'strainer',
     git: "https://github.com/customink/strainer"
