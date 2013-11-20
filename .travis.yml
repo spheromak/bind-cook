@@ -6,4 +6,3 @@ before_script:
   - bundle exec berks install
 script:
   - bundle exec strainer test
-  - bundle exec foodcritic -f correctness -f services -f libraries -f deprecated ./
