@@ -4,6 +4,7 @@ source  'https://rubygems.org'
 gem 'berkshelf'
 
 group "develop" do
+  gem 'rake'
   gem 'busser-bats'
   gem 'busser-serverspec'
   gem 'foodcritic'
