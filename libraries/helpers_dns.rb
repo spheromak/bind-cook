@@ -135,7 +135,7 @@ module Helpers
       #
       # all the keys we consider ok in a zone data struct
       #
-      def valid_fields
+      def valid_fields(type)
         keys = %w/ ttl refresh retry expire minimum
                    zone_name
                    authority
@@ -154,7 +154,7 @@ module Helpers
       # do some checks on a data structure
       # to ensure we have them in this bag
       def validate_zone_data(type, data)
-        valid_fields.each do |key|
+        valid_fields(type).each do |key|
           unless data.key?(key)
             error = "Couldn't find required config option '#{key}' "
             error << "in zone #{data["zone_name"]}"
