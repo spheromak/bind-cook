@@ -1,15 +1,10 @@
 #!/usr/bin/env rake
 require 'rake'
-require 'rspec/core/rake_task'
 
 task :default => 'test:quick'
 
 namespace :test do
 
-  RSpec::Core::RakeTask.new(:spec) do |t|
-    t.pattern = Dir.glob('test/spec/**/*_spec.rb')
-    t.rspec_opts = "--color -f d"
-  end
 
   begin
     require 'kitchen/rake_tasks'
@@ -26,6 +21,7 @@ namespace :test do
       canefile = ".cane"
       cane.abc_max = 10
       cane.abc_glob =  '{recipes,libraries,resources,providers}/**/*.rb'
+      cane.abc_exclude = %w[Helpers::Dns#build_resources]
       cane.no_style = true
       cane.parallel = true
     end
@@ -46,20 +42,11 @@ namespace :test do
     warn "Foodcritic Is missing ZOMG"
   end
 
-  begin
-    require 'tailor/rake_task'
-    Tailor::RakeTask.new
-  rescue LoadError
-    warn "Tailor gem not installed, now the code will look like crap!"
-  end
-
 
   desc 'Run all of the quick tests.'
   task :quick do
     Rake::Task['test:quality'].invoke
     Rake::Task['test:foodcritic'].invoke
-    Rake::Task['test:spec'].invoke
-    Rake::Task['test:tailor'].invoke
   end
 
 
