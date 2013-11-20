@@ -1,5 +1,6 @@
 # Encoding: utf-8
 module Helpers
+  # Dns container for recipe helpers
   module Dns
     class << self
       include Chef::DSL::DataQuery
@@ -27,9 +28,7 @@ module Helpers
           fail ArgumentError, 'match_list only knows how to dea with things that respond to: join, split, keys'
         end
         list.strip!
-        unless list =~ /.*;$/ or list.empty?
-          list += ';'
-        end
+        list += ';' unless list =~ /.*;$/ || list.empty?
         list
       end
 
@@ -38,6 +37,7 @@ module Helpers
       # TODO: TTL should be per-entry IMO
       # TODO: fix cane ABC complexity:
       # libraries/helpers_dns.rb  Helpers::Dns#build_resources  28
+      # rubocop:disable all
       def build_resources(data, zone, ttl = '3600')
         ptr = []
         resources = []
@@ -72,6 +72,7 @@ module Helpers
             data[rr].each do |type, val|
 
               # crete entries suitable for nsupdate
+              # TODO: refactor
               case type
               when /ptr/i
                 ptr << "delete  #{host}  #{type.upcase} "  if delete_first
@@ -115,6 +116,7 @@ module Helpers
         return resources if ptr.empty?
         ptr
       end
+      # rubucop:enable all
 
       #
       # Takes a bag looks for delegate key.
@@ -131,10 +133,9 @@ module Helpers
       end
 
       #
-      # do some checks on a data structure
-      # to ensure we have them in this bag
+      # all the keys we consider ok in a zone data struct
       #
-      def validate_zone_data(type, data)
+      def valid_fields
         keys = %w/ ttl refresh retry expire minimum
                    zone_name
                    authority
@@ -145,13 +146,15 @@ module Helpers
                    zone_name
           /
 
-        case type
-        when /slave/i
-        when /master/i
-          keys << 'allow_update'
-        end
+        keys << 'allow_update' if type =~ /master/i
+        keys
+      end
 
-        keys.each do |key|
+      #
+      # do some checks on a data structure
+      # to ensure we have them in this bag
+      def validate_zone_data(type, data)
+        valid_fields.each do |key|
           unless data.key?(key)
             error = "Couldn't find required config option '#{key}' "
             error << "in zone #{data["zone_name"]}"
@@ -196,7 +199,9 @@ module Helpers
       # does this node have this ipaddr
       #
       def have_ip?(addr)
-        node[:network][:interfaces].map { |i, data|  data['addresses'].map { |ip, data| ip == addr } }.flatten.include? true
+        node[:network][:interfaces].map do |i, data|
+          data['addresses'].map { |ip, crap| ip == addr }
+        end.flatten.include? true
       end
 
       #

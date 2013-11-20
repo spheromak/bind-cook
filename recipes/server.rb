@@ -22,8 +22,8 @@ end
 #
 keys = node[:dns][:keys] || {}
 zones = {}
-type = ""
-dhcp_allow= ""
+type = ''
+dhcp_allow = ''
 node[:dns][:zones].each do |zone|
   zone_data = Helpers::Dns.fetch_zone zone
 
@@ -38,9 +38,7 @@ node[:dns][:zones].each do |zone|
   Helpers::Dns.validate_zone_data(type, zone_data)
 
   # merge keys
-  if zone_data.key?('keys')
-    node.run_state[:dns_keys] = Chef::Mixin::DeepMerge.merge(keys, zone_data['keys'])
-  end
+  node.run_state[:dns_keys] = Chef::Mixin::DeepMerge.merge(keys, zone_data['keys']) if zone_data.key?('keys')
 
   zones[zone] = zone_data
 end
@@ -50,7 +48,6 @@ end
 #
 include_recipe 'bind::_keys'
 
-resource = {}
 delegates = {}
 zones.each do |zone, zone_data|
   log "Setting up DNS Zone: #{zone}"
@@ -77,7 +74,6 @@ zones.each do |zone, zone_data|
     variables(name: zone, data: zone_data)
     notifies :restart, "service[#{node[:bind][:service_name]}]", :immediately
   end
-
 
   #
   #
@@ -114,4 +110,3 @@ zones.each do |zone, zone_data|
     notifies :run, "execute[nsupdate_#{zone}]", :delayed
   end
 end
-

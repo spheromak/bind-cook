@@ -1,5 +1,12 @@
 Encoding:
   Enabled: false
 
+MethodLength:
+   Max: 60
+
 LineLength:
-   Max: 100
+   Max: 111
+
+AllCops:
+  Excludes:
+    - spec/server_spec.rb

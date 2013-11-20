@@ -23,9 +23,7 @@ node[:dns][:root_zones].each do |zone|
   validate_zone_data('master', bag)
 
   # clobber merge keys
-  if bag.key?('keys')
-    keys = Chef::Mixin::DeepMerge.merge(keys, bag['keys'])
-  end
+  keys = Chef::Mixin::DeepMerge.merge(keys, bag['keys']) if bag.key?('keys')
 
   build_zone(zone, 'master', bag)
 

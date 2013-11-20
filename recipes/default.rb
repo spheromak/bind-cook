@@ -21,9 +21,7 @@
 #
 #
 
-if platform_family?('debian')
-  include_recipe 'apparmor'
-end
+include_recipe 'apparmor' if platform_family?('debian')
 
 package node[:bind][:package] do
   action :install
