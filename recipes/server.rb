@@ -41,16 +41,6 @@ node[:dns][:zones].each do |zone|
   node.run_state[:dns_keys] = Chef::Mixin::DeepMerge.merge(keys, zone_data['keys']) if zone_data.key?('keys')
 
   zones[zone] = zone_data
-end
-
-#
-# build out rndc keys
-#
-include_recipe 'bind::_keys'
-
-delegates = {}
-zones.each do |zone, zone_data|
-  log "Setting up DNS Zone: #{zone}"
 
   # crate the zone record
   bind_zone zone do
@@ -60,6 +50,16 @@ zones.each do |zone, zone_data|
     allow_update dhcp_allow
   end
 
+end
+
+#
+# build out rndc keys
+# Do this here cause the RR entries need to have working nsupdate
+#
+include_recipe 'bind::_keys'
+
+delegates = {}
+zones.each do |zone, zone_data|
   #
   # Create the Base Zone File
   # this should only be created ever once
