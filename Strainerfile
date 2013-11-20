@@ -2,4 +2,3 @@
 lint: cd $SANDBOX/$COOKBOOK; rubocop 
 spec: cd $SANDBOX/$COOKBOOK; rspec --color -f d
 fc: cd $SANDBOX/$COOKBOOK;  foodcritic ./
-
