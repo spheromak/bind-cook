@@ -164,13 +164,13 @@ module Helpers
           unless data.key?(key)
             error = "Couldn't find required config option '#{key}' "
             error << "in zone #{data["zone_name"]}"
-            fail ::Chef::Exceptions::AttributeNotFound error
+            fail error
           end
 
           if data[key].empty?
             error = "Config option #{key} is empty, "
             error << "and should have a value in zone #{data["zone_name"]}"
-            fail ::Chef::Exceptions::AttributeNotFound error
+            fail error
           end
         end
       end

@@ -27,7 +27,9 @@ dhcp_allow = ''
 node[:dns][:zones].each do |zone|
   zone_data = Helpers::Dns.fetch_zone zone
 
-  if Helpers::Dns.zone_master? zone_data
+  if zone_data.has_key? 'type'
+    type = zone_data.type
+  elsif Helpers::Dns.zone_master? zone_data
     type = 'master'
     dhcp_allow = Helpers::Dns.find_dhcp_servers
   else
