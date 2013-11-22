@@ -136,7 +136,11 @@ module Helpers
       # all the keys we consider ok in a zone data struct
       #
       def valid_fields(type)
-        keys = %w/ ttl refresh retry expire minimum
+        keys=[]
+        if type == 'forward'
+          keys = %w/forwarders/
+        else
+          keys = %w/ ttl refresh retry expire minimum
                    zone_name
                    authority
                    email
@@ -144,7 +148,8 @@ module Helpers
                    master_address
                    allow_query
                    zone_name
-          /
+            /
+        end
 
         keys << 'allow_update' if type =~ /master/i
         keys
@@ -154,17 +159,18 @@ module Helpers
       # do some checks on a data structure
       # to ensure we have them in this bag
       def validate_zone_data(type, data)
+
         valid_fields(type).each do |key|
           unless data.key?(key)
             error = "Couldn't find required config option '#{key}' "
             error << "in zone #{data["zone_name"]}"
-            fail Chef::Exceptions::AttributeNotFound error
+            fail ::Chef::Exceptions::AttributeNotFound error
           end
 
           if data[key].empty?
             error = "Config option #{key} is empty, "
             error << "and should have a value in zone #{data["zone_name"]}"
-            fail Chef::Exceptions::AttributeNotFound error
+            fail ::Chef::Exceptions::AttributeNotFound error
           end
         end
       end
