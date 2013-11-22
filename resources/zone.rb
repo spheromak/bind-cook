@@ -5,3 +5,6 @@ attribute :allow_query, default: 'none'
 attribute :allow_update, default: 'none'
 attribute :zone_type
 attribute :zone_data
+attribute :cookbook,
+          kind_of: String,
+          default: 'bind'

@@ -34,6 +34,7 @@ action :create do
   updates << Helpers::Dns.match_list(new_resource.allow_update)
 
   template "/var/named/zones/#{new_resource.name}" do
+    cookbook new_resource.cookbook
     source 'zone.erb'
     owner node[:bind][:user]
     group node[:bind][:group]

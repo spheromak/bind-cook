@@ -75,6 +75,9 @@ zones.each do |zone, zone_data|
     notifies :restart, "service[#{node[:bind][:service_name]}]", :immediately
   end
 
+  # the rest of this is only for master zones
+  next unless type = "master"
+
   #
   #
   # setup the nsupdate exec for this zone
