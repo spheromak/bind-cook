@@ -76,7 +76,7 @@ zones.each do |zone, zone_data|
   end
 
   # the rest of this is only for master zones
-  next unless type = "master"
+  next unless type == 'master'
 
   #
   #
