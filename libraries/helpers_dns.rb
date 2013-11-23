@@ -32,6 +32,20 @@ module Helpers
         list
       end
 
+
+      def zone_type zone_data
+        type = ''
+        if zone_data.has_key? 'type'
+          type = zone_data.type
+        elsif zone_master? zone_data
+          type = 'master'
+          dhcp_allow = find_dhcp_servers
+        else
+          type = 'slave'
+        end
+        type
+      end
+
       # returns an array of entries suitable for bind zone
       # TODO: Need to refactor this in a big way
       # TODO: TTL should be per-entry IMO

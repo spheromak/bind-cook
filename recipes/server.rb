@@ -27,14 +27,7 @@ dhcp_allow = ''
 node[:dns][:zones].each do |zone|
   zone_data = Helpers::Dns.fetch_zone zone
 
-  if zone_data.has_key? 'type'
-    type = zone_data.type
-  elsif Helpers::Dns.zone_master? zone_data
-    type = 'master'
-    dhcp_allow = Helpers::Dns.find_dhcp_servers
-  else
-    type = 'slave'
-  end
+  type = Helpers::Dns.zone_type zone_data
 
   # make sure we have all the data we need
   Helpers::Dns.validate_zone_data(type, zone_data)
@@ -62,6 +55,8 @@ include_recipe 'bind::_keys'
 
 delegates = {}
 zones.each do |zone, zone_data|
+  type = Helpers::Dns.zone_type zone_data
+
   #
   # Create the Base Zone File
   # this should only be created ever once

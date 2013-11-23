@@ -32,7 +32,7 @@ link '/etc/named' do
 end
 
 # build up the various dirs where we house things
-%w/zones master slave/.each do |type|
+%w/zones master slave forward/.each do |type|
   %w/db rr/.each do |record|
     directory "/var/named/#{type}" do
       owner node[:bind][:user]
