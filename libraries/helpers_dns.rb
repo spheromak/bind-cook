@@ -32,14 +32,12 @@ module Helpers
         list
       end
 
-
-      def zone_type zone_data
+      def zone_type(zone_data)
         type = ''
-        if zone_data.has_key? 'type'
+        if zone_data.key? 'type'
           type = zone_data['type']
         elsif zone_master? zone_data
           type = 'master'
-          dhcp_allow = find_dhcp_servers
         else
           type = 'slave'
         end
